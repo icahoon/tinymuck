@@ -1,0 +1,24 @@
+;; This file suggested by Ben, to make changing cookies easier.
+;; Format: '<cookie>' <expansion ....>
+;; The cookie _must_ be inclosed in single quotes.  It needs to be a
+;; single letter.  It's a C character, so use '\'' for ', etc.
+
+'"'	say
+':'	pose
+';'	semicolon		;; Not in 2.2, but doesn't break anything.
+'<'	backarrow		;; for Name <-- foo
+'>'     forearrow
+'|'	paste
+'`'	backtick
+'\''	tick
+'['	lbracket
+']'	rbracket
+'('	lparenthesis
+')'	rparenthesis
+'*'	asterisk
+'&'	ampersand
+'%'	percentsign
+'='	equalsign
+'+'	plussign
+'-'	minussign
+'#'	poundsign

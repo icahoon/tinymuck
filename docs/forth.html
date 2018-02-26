@@ -1,0 +1,2344 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>MUF Reference Manual</title>
+  </head>
+
+  <body bgcolor="#FFFFFF">
+    <bodytext>
+      <h1>MUF Reference Manual</h1>
+
+      <p>
+	Information available on the following:
+      </p>
+      <p>
+	PRIMITIVES
+      </p>
+      <p>
+	Arithmetic:
+      <p>
+      </p>
+	+ - * / % &lt; &gt; &lt;= &gt;= = and or not random
+      </p>
+      <p>
+	Stack Manipulation:
+      </p>
+      <p>
+	depth dup over pick pop rot rotate swap
+      </p>
+      <p>
+	Bit, Field, and Property Setting/Getting:
+      </p>
+      <p>
+	addprop desc drop fail flag?  getpropdbref getpropstr
+	getproptime getpropval name odrop ofail osucc remove_prop set
+	setdesc setdrop setfail setname setodrop setofail setosucc
+	setprop setsucc succ
+      </p>
+      <p>
+	Strings:
+      </p>
+      <p>
+	explode instr rinstr strcat strcmp strcut stringcmp stringncmp
+	strlen strncmp subst
+      </p>
+      <p>
+	Connections and connected players (all optional except awake?
+	and online):
+	</p>
+      <p>
+	awake?  conboot concount condbref conhost conidle connections
+	contime online
+      </p>
+      <p>
+	Miscellaneous:
+      </p>
+      <p>
+	@ !  addpennies atoi call check_moveto contents copyobj dbcmp
+	dbref dbtop execute exit exit?  exits getlink int intostr
+	location match moveto next notify notify_except number?  ok?
+	owner pennies player?  prog program?  pronoun_sub read rmatch
+	room?  self strftime systime thing?  time var variable
+      </p>
+      <p>
+	TOPICS:
+      </p>
+      <p>
+	@Q addresses arguments comments conventions credits editor
+	execution home instruction-count linking locking macroes objects
+	permissions quickref recursion stack tutorial user types
+	variables
+      </p>
+
+      
+      <hr>
+      <!-- pattern="credits" -->
+      <p>
+	MUF REFERENCE MANUAL:
+      </p>
+      <p>
+	The MUF reference manual was updated for TinyMUCK 2.1.1 by
+	Jethro with help from Black_Dougal.  ChupChup updated it for
+	2.2.  Jiro/Mizue adapted it for 2.3, as well as inserting the
+	quick reference and reformatting it for use with the `man'
+	command; corrections can be mailed to
+	arromdee@jyusenkyou.cs.jhu.edu.
+      </p>
+
+      <hr>
+      <!-- pattern="editor" -->
+      <h2>editor</h2>
+      <p>
+	The dictionary of MUF editor commands may be obtained with the
+	command `man editor-dict'.  The dictionary is several screens
+	long.
+      </p>
+
+      <hr>
+      <!-- pattern="editor-dict" -->
+      <p>
+	DICTIONARY OF MUF EDITOR COMMANDS
+	<br>
+	---------------------------------
+      </p>
+      <p>
+	@PROG &lt;name&gt;: enters the editor from Muck, creating a new
+	program if none exists matching the name.  [Player must have
+	Mucker bit.]  @EDIT &lt;name&gt;: enters the editor from Muck;
+	program with the given name must already exist.  [Player must
+	have Mucker bit.]
+      </p>
+      <p>
+	&lt;number&gt; i(insert) Enter insert mode before line #i.  Any
+	number of lines may be contiguously in- serted.  The old line #i
+	will become the first line after the inserted lines.  Blank
+	lines are ignored and do not become part of the program.
+	Entering the character `.' (period) alone on a line (not
+	preceded or followed by any spaces) exits insert mode.  The `.'
+	does not become a line.
+      </p>
+      <p>
+	-1, as a line number, indicates the last line in the program.
+      </p>
+      <p>
+	&lt;number1&gt; &lt;number2&gt; l(ist) Display all lines from
+	&lt;number1&gt; to &lt;number2&gt; inclusive.  If only one
+	&lt;number&gt; is given, only that line will be displayed.
+      </p>
+      <p>
+	&lt;number1&gt; &lt;number2&gt; d(elete) Delete all lines from
+	&lt;number1&gt; to &lt;number2&gt; inclusive.  If only one
+	&lt;number&gt; is given, only that line will be deleted.
+      </p>
+      <p>
+	c(ompile) Compile the program you are editing.  This must be
+	done before a program will run properly.
+      </p>
+      <p>
+	u(nassemble) Unassemble program.  This was used to test MUF
+	during its development.  It has no real use for programmers.
+      </p>
+      <p>
+	n(umbers) Toggle display of numbers in program listings.
+      </p>
+      <p>
+	q(uit) Quit from the editor. @Q may also be used to do this.
+      </p>
+      <p>
+	&lt;name1&gt; &lt;name2&gt; s(how) Show macros in long format:
+	name of macro, name of the person who entered it, and the body
+	of the macro.  `a z s' will show all macros, for instance.
+      </p>
+      <p>
+	&lt;name&gt; k(ill) Delete a macro.  You can only delete your
+	own macros unless you're a wizard.
+      </p>
+      <p>
+	&lt;name1&gt; &lt;name2&gt; a(bridged) Abridged macro display.
+	Shows only the names of macros.
+      </p>
+      <p>
+	&lt;number&gt; v(iew) Displays the header of the program which
+	is #&lt;number&gt;.  You must otherwise have permission to list
+	the program.
+      </p>
+
+      <hr>
+      <!-- pattern="conventions" -->
+      <h2>conventions</h2>
+      <p>
+	The conventions used when describing primitives are: d: database
+	reference #1000 i (i1, i2...): integer 15 s: string "this is a
+	string" v: variable varname a: function address 'function-name
+      </p>
+      <p>
+	c: connection [not every Muck 2.3 has connections]
+      </p>
+      <p>
+	x, y: any of the above
+      </p>
+      <p>
+	--: separates values accepted and returned; ( s -- i ) accepts a
+	string and returns an integer.
+      </p>
+      <p>
+	There is no such thing as a boolean value; #-1, "", 0, and
+	disconnected connections all act like FALSE boolean values with
+	words such as `not', `and', and `if'; other values act as TRUE
+	booleans.
+      </p>
+
+      <hr>
+      <!-- pattern="+" -->
+      <h2>+ ( i1 i2 -- i )</h2>
+      <p>
+	Addition of integers.  Can also be used to add to variables (as
+	opposed to the contents of variables).
+      </p>
+
+      <hr>
+      <!-- pattern="-" -->
+      <h2>- ( i1 i2 -- i )</h2>
+      <p>
+	Subtraction (i1 - i2) of integers.  Can also be used to subtract
+	from variables (as opposed to the contents of variables).
+      </p>
+
+      <hr>
+      <!-- pattern="*" -->
+      <h2>* ( i1 i2 -- i )</h2>
+      <p>
+	Multiplication, on integers.  Can be used on variables if you
+	really feel like it.
+      </p>
+
+      <hr>
+      <!-- pattern="/" -->
+      <h2>/ ( i1 i2 -- i )</h2>
+      <p>
+	Division (i1 divided by i2, or v divided by i2).  This is
+	integer division which truncates towards zero.  You can use it
+	on variables if you get the urge.
+      </p>
+
+      <hr>
+      <!-- pattern="%" -->
+      <h2>% ( i1 i2 -- i )</h2>
+      <p>
+	Modulus operator (i1 mod i2).  This modulus operator fits the
+	equality abs(i1 mod i2) == abs(i1) mod abs(i2).  It can be used
+	on variables (why?  Who knows.)
+      </p>
+
+      <hr>
+      <!-- pattern="&lt;" -->
+      <h2>&lt; ( i1 i2 -- i )</h2>
+      <p>
+	Returns 1 if i1&lt;i2, 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="&gt;" -->
+      <h2>&gt; ( i1 i2 -- i )</h2>
+      <p>
+	Returns 1 if i1&gt;i2, 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="=" -->
+      <h2>= ( i1 i2 -- i )</h2>
+      <p>
+	Returns 1 if i1&lt;=i2, 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="&lt;=" -->
+      <h2>&lt;= ( i1 i2 -- i )</h2>
+      <p>
+	Returns 1 if i1&gt;=i2, 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="&gt;=" -->
+      <h2>&gt;= ( i1 i2 -- i )</h2>
+      <p>
+	Returns 1 if i1 equals i2, 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="@" -->
+      <h2>@ ( v -- x )</h2>
+      <p>
+	Retrieves variable v's value as x.
+      </p>
+
+      <hr>
+      <!-- pattern="!" -->
+      <h2>! ( x v -- )</h2>
+      <p>
+	Sets variable v's value to x.
+      </p>
+
+      <hr>
+      <!-- pattern="addpennies" -->
+      <h2>addpennies ( d i -- )</h2>
+      <p>
+	d must be a player or thing object.  Adds i pennies to object d.
+	Without Wizard permissions, addpennies may only produce a result
+	between zero and MAX_PENNIES, and when used on other players may
+	be used only to add.
+      </p>
+
+      <hr>
+      <!-- pattern="addprop" -->
+      <h2>addprop ( d s1 s2 i -- )</h2>
+      <p>
+	Sets property associated with s1 in object d.  If s2 is a null
+	string, the property is set as an integer property using i;
+	otherwise, the property is set using s while the integer is
+	ignored.  In either case all four parameters are needed.  This
+	MUF word remains for backwards compatibility and will eventually
+	go away; use setprop instead.
+      </p>
+
+      <hr>
+      <!-- pattern="and" -->
+      <h2>and ( x y -- i )</h2>
+      <p>
+	Performs the boolean `and' operation on x and y, returning 1 if
+	both i1 and i2 are TRUE, and returning 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="atoi" -->
+      <h2>atoi ( s -- i )</h2>
+      <p>
+	Turns string s into integer i.  If s is not a string, then 0 is
+	pushed onto the stack.
+      </p>
+
+      <hr>
+      <!-- pattern="awake?" -->
+      <h2>awake? ( d -- i )</h2>
+      <p>
+	Returns the number of times a player is connected.
+      </p>
+
+      <hr>
+      <!-- pattern="call" -->
+      <h2>call ( d -- ?? )</h2>
+      <p>
+	Calls another program d.  d must have been compiled already.  d
+	will inherit the values of ME, LOC, TRIGGER, and all other
+	variables (even if the variables are given different names
+	within d), and the same stack.  The user must have permissions
+	on d, or else d must have the LINK_OK flag.
+      </p>
+
+      <hr>
+      <!-- pattern="check_moveto" -->
+      <h2>check_moveto ( d1 d2 -- s )</h2>
+      <p>
+	Checks if the moveto function can be used to legally move object
+	d1 to location d2.  It returns a null string if it can, and
+	otherwise a string corresponding to the error moveto would
+	return.  (In either case it doesn't actually move anything.)
+      </p>
+      <p>
+	See moveto.
+      </p>
+
+      <hr>
+      <!-- pattern="contents" -->
+      <h2>contents ( d -- d' )</h2>
+      <p>
+	Pushes the dbref of the first thing contained by d.  This dbref
+	can then be referenced by `next' to cycle through all of the
+	contents of d.  d may be a room or a player.
+      </p>
+
+      <hr>
+      <!-- pattern="copyobj" -->
+      <h2>copyobj ( d -- d' )</h2>
+      <p>
+	Creates a new object (returning d' on top of the stack) that is
+	a copy of ob- ject d except for any actions which may be on it.
+	You can only `copyobj' things, and each program is allowed to
+	create only one new thing per run.
+      </p>
+
+      <hr>
+      <!-- pattern="dbcmp" -->
+      <h2>dbcmp ( d1 d2 -- i )</h2>
+      <p>
+	Performs comparison of database objects d1 and d2.  If they are
+	the same ob- ject, then i is 1, otherwise i is 0.
+      </p>
+
+      <hr>
+      <!-- pattern="dbref" -->
+      <h2>dbref ( i -- d )</h2>
+      <p>
+	Converts integer i to object reference d.  `44 dbref' is the
+	same as `#44'.
+      </p>
+
+      <hr>
+      <!-- pattern="dbtop" -->
+      <h2>dbtop ( -- d )</h2>
+      <p>
+	Returns the dbref of the top object in the database.
+      </p>
+
+      <hr>
+      <!-- pattern="depth" -->
+      <h2>depth ( -- i )</h2>
+      <p>
+	Returns the stack depth.
+      </p>
+
+      <hr>
+      <!-- pattern="desc" -->
+      <h2>desc ( d -- s )</h2>
+      <p>
+	Takes object d and returns its description (@desc) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="drop" -->
+      <h2>drop ( d -- s )</h2>
+      <p>
+	Takes object d and returns its drop (@drop) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="dup" -->
+      <h2>dup ( x -- x x )</h2>
+      <p>
+	Duplicates the item at the top of the stack.
+      </p>
+
+      <hr>
+      <!-- pattern="else" -->
+      <h2>else</h2>
+      <p>
+	See if.
+      </p>
+
+      <hr>
+      <!-- pattern="execute" -->
+      <h2>execute ( a -- ?? )</h2>
+      <p>
+	Executes the function pointed to by the address a on the stack.
+	If the function has different permissions than the current
+	program, it will be run with its own permissions instead of the
+	current program's permissions.  (2.2 did not do this.)
+      </p>
+
+      <hr>
+      <!-- pattern="exit" -->
+      <h2>exit ( -- )</h2>
+      <p>
+	Exits from the word currently being executed, returning control
+	to the calling word, at the statement immediately after the
+	invocation of the call (exiting the program if applicable).
+      </p>
+
+      <hr>
+      <!-- pattern="exit?" -->
+      <h2>exit? ( d -- i )</h2>
+      <p>
+	Returns 1 if object d is an exit object, 0 if otherwise.  See
+	also player?, program?, room?, thing?, ok?.
+      </p>
+
+      <hr>
+      <!-- pattern="exits" -->
+      <h2>exits ( d -- d' )</h2>
+      <p>
+	Returns the first exit in the linked exit list of
+	room/player/object d.  This list can be transversed with `next'.
+	The player must have permission on d.
+      </p>
+
+      <hr>
+      <!-- pattern="explode" -->
+      <h2>explode ( s1 s2 -- ... i )</h2>
+      <p>
+	s2 is the delimiter string, and s1 is the target string, which
+	will be frag- mented, with i pushed on top of the stack as the
+	number of strings s1 was bro- ken into.  For instance: "Hello
+	world" " " explode will result in "world" "Hello" 2 on the
+	stack.  (Note that if you read these items off in order, they
+	will come out "Hello" first, then "world".)  s2 may be any
+	length greater than 0.
+      </p>
+
+      <hr>
+      <!-- pattern="fail" -->
+      <h2>fail ( d -- s )</h2>
+      <p>
+	Takes object d and returns its fail (@fail) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="flag?" -->
+      <h2>flag? ( d s -- i )</h2>
+      <p>
+	Reads the flag of object d, specified by s, and returns its
+	state: 1 = on; 0 = off; the string s may be abbreviated to down
+	to one letter.  All flags may be read, including the BUILDER,
+	MUCKER, QUELL, and WIZARD flags (which cannot be set).  flag?
+	returns 0 for WIZARD if the wizard is also QUELL, and 0 for un-
+	supported or unrecognized flags.
+      </p>
+
+      <hr>
+      <!-- pattern="getlink" -->
+      <h2>getlink ( d -- d' )</h2>
+      <p>
+	Returns what object d is linked to, or #-1 if d is unlinked.
+	The interpreta- tion of getlink is the same as for the @LINK
+	command in Muck; for an exit/action it returns the room,
+	program, action, or thing linked to.  For a player, program, or
+	thing, it returns its `home', and for rooms it returns the
+	drop-to.
+      </p>
+
+      <hr>
+      <!-- pattern="getpropdbref" -->
+      <h2>getpropdbref ( d s -- d )</h2>
+      <p>
+	Retrieves the dbref associated with property s in object d.  If
+	the dbref doesn't exist, #-1 is returned.
+      </p>
+
+      <hr>
+      <!-- pattern="getpropstr" -->
+      <h2>getpropstr ( d s -- s )</h2>
+      <p>
+	Retrieves the string associated with property s in object d.  If
+	the property doesn't exist, "" (null string) is returned.
+      </p>
+
+      <hr>
+      <!-- pattern="getpropval" -->
+      <h2>getpropval ( d s -- i )</h2>
+      <p>
+	Retrieves the integer value i associated with property s in
+	object d. If the property doesn't exist, 0 is returned.
+      </p>
+
+      <hr>
+      <!-- pattern="if ... [ else ... ] then" -->
+      <h2>if ... [ else ... ] then ( x -- )</h2>
+      <p>
+	Examines boolean value x.  If x is TRUE, the sequence of
+	statements after the `if' up until the `then' (or until the
+	`else' if it is present) performed.  If it is FALSE, then these
+	statements are skipped, and if an `else' is present, the
+	statements between the `else' and the `then' are performed.
+	Control con- tinues as usual at the statement after the `then'.
+	Note that checking the top of the stack actually pops it, so if
+	you want to re-use it, you should dup (see `dup') it before the
+	if.  For every `if' in a word, there MUST be a `then', and
+	vice-versa.  `else' is optional.  See booleans, conventions.
+      </p>
+
+      <hr>
+      <!-- pattern="instr" -->
+      <h2>instr ( s s1 -- i )</h2>
+      <p>
+	Returns the first occurrence of string s1 in string s, or 0 if
+	s1 is not found.  See also rinstr.
+      </p>
+
+      <hr>
+      <!-- pattern="int" -->
+      <h2>int ( x -- i )</h2>
+      <p>
+	x must be a variable or a dbref.  Converts x into integer i.
+	(To convert a string, use `atoi').
+      </p>
+
+      <hr>
+      <!-- pattern="intostr" -->
+      <h2>intostr ( x -- s )</h2>
+      <p>
+	x must be an integer or dbref.  Converts x into string s.
+      </p>
+
+      <hr>
+      <!-- pattern="location" -->
+      <h2>location ( d -- d' )</h2>
+      <p>
+	Returns location of object d as object d'; this will work on
+	rooms to find parent rooms, and on exits/actions to find
+	sources.  It returns #-1 if used on the global environment,
+	which has no parent.
+      </p>
+
+      <hr>
+      <!-- pattern="match" -->
+      <h2>match ( s -- d )</h2>
+      <p>
+	Takes string s and matches it to find an object with that name
+	or containing the string at the start of a word in its name.
+	`here' and `me' do work.  If nothing is found, d = #-1.  If
+	ambiguous, d = #-2. If HOME, d = #-3.  In a program being run by
+	a wizard, or one which is set W, this will match any object in
+	the database with #number or *player.
+      </p>
+
+      <hr>
+      <!-- pattern="moveto" -->
+      <h2>moveto ( d1 d2 -- )</h2>
+      <p>
+	Moves object d1 to object d2, or moves it home if d2 is #-3.
+	MOVETO is affected by the following rules: The source, object,
+	and destination must be either owned by you or JUMP_OK (the
+	destination may also be HOME).  Also, you may always move
+	something owned by you out of any source, and you may always
+	move something home if you own the source.
+      </p>
+      <p>
+	If the thing and destination are rooms, you may also do the
+	moveto if the destination is LINK_OK or ABODE (room parenting).
+      </p>
+      <p>
+	See check_moveto.
+      </p>
+
+      <hr>
+      <!-- pattern="name" -->
+      <h2>name ( d -- s )</h2>
+      <p>
+	Takes object d and returns its name (@name) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="next" -->
+      <h2>next ( d -- d' )</h2>
+      <p>
+	Takes object d and returns the next thing in the linked
+	contents/exits list of d's location.
+      </p>
+
+      <hr>
+      <!-- pattern="not" -->
+      <h2>not ( x -- i )</h2>
+      <p>
+	Performs the boolean `not' operation on x, returning 1 if x is
+	FALSE, and re- turning 0 otherwise.  See conventions.
+      </p>
+
+      <hr>
+      <!-- pattern="notify" -->
+      <h2>notify ( d s -- )</h2>
+      <p>
+	d must be a player object, and s a string.  This directly prints
+	the message to that player, followed by a carriage return.  If
+	the string is null, nothing is printed; to get a blank line, use
+	a string containing a single space.
+      </p>
+
+      <hr>
+      <!-- pattern="notify_except" -->
+      <h2>notify_except ( d1 d2 s -- )</h2>
+      <p>
+	d1 must be a room object, and s a string.  This prints the
+	message to all players in location d1 except object d2.  If d2
+	is not a player, or if d2 is NOTHING (#-1), all players are
+	notified.  If s is null it prints nothing; to get a blank line,
+	use a string containing a single space.
+      </p>
+
+      <hr>
+      <!-- pattern="number?" -->
+      <h2>number? ( s -- i )</h2>
+      <p>
+	Returns 1 if string on top of the stack contains a number,
+	otherwise 0.  This checks the characters in the string, not the
+	type of the data on top of the stack.
+      </p>
+
+      <hr>
+      <!-- pattern="odrop" -->
+      <h2>odrop ( d -- s )</h2>
+      <p>
+	Takes object d and returns its odrop (@odrop) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="ofail" -->
+      <h2>ofail ( d -- s )</h2>
+      <p>
+	Takes object d and returns its ofail (@ofail) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="ok?" -->
+      <h2>ok? ( x -- i )</h2>
+      <p>
+	Takes x and returns 1 if x is a type dbref, falls within the
+	range of objects in the database, and is not a garbage object.
+	See also exit?, player?, program?, thing?.
+      </p>
+
+      <hr>
+      <!-- pattern="online" -->
+      <h2>online ( -- d1 d2 ... i )</h2>
+      <p>
+	Returns the dbrefs of all connected users, in reverse WHO order,
+	along with the number of users.
+      </p>
+
+      <hr>
+      <!-- pattern="or" -->
+      <h2>or ( x y -- i )</h2>
+      <p>
+	Performs the boolean `or' operation on x and y. Returns 1 on the
+	stack if ei- ther x or y is TRUE, and returns 0 otherwise.
+      </p>
+
+      <hr>
+      <!-- pattern="osucc" -->
+      <h2>osucc ( d -- s )</h2>
+      <p>
+	Takes object d and returns its osuccess (@osucc) string field.
+      </p>
+
+      <hr>
+      <!-- pattern="over" -->
+      <h2>over ( x y -- x y x )</h2>
+      <p>
+	Duplicates the second-to-top thing on the stack.  This is the
+	same as `2 pick'.
+      </p>
+
+      <hr>
+      <!-- pattern="owner" -->
+      <h2>owner ( d -- d' )</h2>
+      <p>
+	d is any database object.  Returns d', the player object that
+	owns d.  If d is a player, d' will be the same as d.
+      </p>
+
+      <hr>
+      <!-- pattern="pennies" -->
+      <h2>pennies ( d -- i )</h2>
+      <p>
+	Gets the amount of pennies player object d has, or the penny
+	value of thing d.
+      </p>
+
+      <hr>
+      <!-- pattern="pick" -->
+      <h2>pick ( ni ... n1 i -- ni ... n1 ni )</h2>
+      <p>
+	Takes the i'th thing from the top of the stack and pushes it on
+	the top.  `1 pick' is equivalent to swap, and `2 pick' is
+	equivalent to over.
+      </p>
+
+      <hr>
+      <!-- pattern="player?" -->
+      <h2>player? ( d -- i )</h2>
+      <p>
+	Returns 1 if object d is a player object, and 0 otherwise.  See
+	also program?, room?, thing?, exit?, ok?.
+      </p>
+
+      <hr>
+      <!-- pattern="pop" -->
+      <h2>pop ( x -- )</h2>
+      <p>
+	Pops the top of the stack into oblivion.
+      </p>
+
+      <hr>
+      <!-- pattern="prog" -->
+      <h2>prog ( -- d )</h2>
+      <p>
+	Returns the dbref of the current program.  (If the program is
+	called by another, the value is still that of the current
+	program, not that of the caller.)
+      </p>
+
+      <hr>
+      <!-- pattern="program?" -->
+      <h2>program? ( d -- i )</h2>
+      <p>
+	Returns 1 if object d is a program, and 0 otherwise.  See also
+	player?, room?, thing?, exit?, ok?.
+      </p>
+
+      <hr>
+      <!-- pattern="pronoun_sub" -->
+      <h2>pronoun_sub ( d s -- s' )</h2>
+      <p>
+	Takes database object d and substitutes string s according to
+	o-message rules.  For example: me @ "%N has lost %p marbles."
+	pronoun_sub would return: "Igor has lost his marbles."  if the
+	player's name was Igor and his sex were male.  d does not have
+	to be a player for the substitutions to work.
+      </p>
+
+      <hr>
+      <!-- pattern="put" -->
+      <h2>put ( ni ... n1 x i -- x ... n1 )</h2>
+      <p>
+	Takes an item and puts it i locations down in the stack,
+	replacing what's already there.  The referse of `pick'.
+      </p>
+
+      <hr>
+      <!-- pattern="random" -->
+      <h2>random ( -- i )</h2>
+      <p>
+	Returns a random integer from 0 to the MAXINT of the system
+	running the MUCK.  In general this number is (2^31)-1 or
+	2147483647.
+      </p>
+
+      <hr>
+      <!-- pattern="read" -->
+      <h2>read ( -- s )</h2>
+      <p>
+	Reads a string s from the user.  If this command is used in a
+	program to which something is locked, the lock will immediately
+	fail and the fail messages will be printed, though the program
+	will still run.
+      </p>
+      <p>
+	If the string is @Q, the program immediately exits.
+      </p>
+
+      <hr>
+      <!-- pattern="remove_prop" -->
+      <h2>remove_prop ( d s -- )</h2>
+      <p>
+	Removes property s from object d.  If the property begins with
+	an underscore, `_' or a dot `.', and the effective user does not
+	have permission on that ob- ject, the call fails.
+      </p>
+
+      <hr>
+      <!-- pattern="rinstr" -->
+      <h2>rinstr ( s s1 -- i )</h2>
+      <p>
+	Returns the last occurrence of string s1 in string s, or 0 if s1
+	is not found.  See also instr.
+      </p>
+
+      <hr>
+      <!-- pattern="rmatch" -->
+      <h2>rmatch ( d s -- d' )</h2>
+      <p>
+	Takes string s, checks all objects and actions associated with
+	object d, and returns object d' which matches that string.  For
+	example, it matches actions and inventory objects for a player
+	object, actions on a thing object, etc.  If nothing is found, d'
+	= #-1.  if ambiguous, d' = #-2.  `rmatch' does not check for the
+	special names "me", "here", or "home".
+      </p>
+
+      <hr>
+      <!-- pattern="room?" -->
+      <h2>room? ( d -- i )</h2>
+      <p>
+	Returns 1 if object d is a room, otherwise returns 0.  See also
+	player?, pro- gram?, thing?, exit?, ok?.
+      </p>
+
+      <hr>
+      <!-- pattern="rot" -->
+      <h2>rot ( x y z -- y z x )</h2>
+      <p>
+	Rotates the top three things on the stack.  This is equivalent
+	to 3 rotate.
+      </p>
+
+      <hr>
+      <!-- pattern="rotate" -->
+      <h2>rotate ( ni ... n1 i -- n(i-1) ... n1 ni )</h2>
+      <p>
+	Rotates the top i things on the stack.  i may be negative.
+      </p>
+
+      <hr>
+      <!-- pattern="self" -->
+      <h2>self ( -- a )</h2>
+      <p>
+	Returns the address of the current function.  See ADDRESSES.
+	This word may be used in anonymous functions.
+      </p>
+
+      <hr>
+      <!-- pattern="set" -->
+      <h2>set ( d s -- )</h2>
+      <p>
+	Sets flag s to object d.  Currently flags things are: ABODE,
+	CHOWN_OK, DARK [DEBUG], HAVEN, JUMP_OK, LINK_OK, MURKY,
+	STICKY[SETUID].  Boolean operations (e.g. `!ABODE') work as
+	expected.
+      </p>
+
+      <hr>
+      <!-- pattern="setdesc" -->
+      <h2>setdesc ( d s -- )</h2>
+      <p>
+	Sets the desc field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setdrop" -->
+      <h2>setdrop ( d s -- )</h2>
+      <p>
+	Sets the drop field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setfail" -->
+      <h2>setfail ( d s -- )</h2>
+      <p>
+	Sets the fail field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setname" -->
+      <h2>setname ( d s -- )</h2>
+      <p>
+	Sets the name field on object d (unless d is a player, in which
+	case there's no way to specify the password).  The program must
+	have permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setodrop" -->
+      <h2>setodrop ( d s -- )</h2>
+      <p>
+	Sets the odrop field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setofail" -->
+      <h2>setofail ( d s -- )</h2>
+      <p>
+	Sets the ofail field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setosucc" -->
+      <h2>setosucc ( d s -- )</h2>
+      <p>
+	Sets the osucc field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="setprop" -->
+      <h2>setprop ( d s x -- )</h2>
+      <p>
+	Sets a property with name s on object d.  The property's value x
+	may be an int, string, or dbref.  See addprop, and the various
+	getprop functions.
+      </p>
+
+      <hr>
+      <!-- pattern="setsucc" -->
+      <h2>setsucc ( d s -- )</h2>
+      <p>
+	Sets the succ field on object d.  The program must have
+	permissions on d.
+      </p>
+
+      <hr>
+      <!-- pattern="strcat" -->
+      <h2>strcat ( s1 s2 -- s )</h2>
+      <p>
+	Concatenates two strings s1 and s2 and pushes the result s =
+	s1s2 onto the stack.
+      </p>
+
+      <hr>
+      <!-- pattern="strcmp" -->
+      <h2>strcmp ( s1 s2 -- i )</h2>
+      <p>
+	Compares strings s1 and s2.  Returns 0 if they are equal,
+	otherwise returns as the difference between the first
+	non-matching character in the strings.  For example, "a" "z"
+	strcmp returns 25.  This function is case sensitive, unlike
+	stringcmp.  See also strncmp, stringcmp, stringncmp.
+      </p>
+
+      <hr>
+      <!-- pattern="strcut" -->
+      <h2>strcut ( s i -- s1 s2 )</h2>
+      <p>
+	Cuts string s after its i'th character.  For example, "Foobar" 3
+	strcut returns "Foo" "bar" If i is zero or greater than the
+	length of s, returns a null string in the first or second
+	position, respectively.
+      </p>
+
+      <hr>
+      <!-- pattern="strftime" -->
+      <h2>strftime ( i s -- s1 )</h2>
+      <p>
+	Takes a time (returned by `systime') and a string, returning a
+	string format- ted according to strftime(3).  Special format
+	strings are of the format %[[- ]width[.precision]type.  `width'
+	is a number specifying the field width; strings are padded with
+	spaces to the right, or to the left if a minus sign is also
+	added.  The precision is a number indicating the maximum length
+	printed; the value is truncated on the right if this is
+	exceeded.  The type is a char- acter or characters, as follows:
+	m month (01-12) h, b month, three letter string (Jan, Feb...)  B
+	month, full string (January, February...)  d day of month
+	(01-31) e day of month (1-31, space-padded) j Julian day of year
+	(001-366) w day of week (0-6, 0 is Sunday) a day of week, three
+	letter string (Sun, Mon...)  A day of week, full string (Sunday,
+	Monday...)  y year of the century (00-99) Y year (padded with
+	0's to 4 places) H hour (00-23) I hour (01-12) k hour (0-23,
+	space-padded) l hour (1-12, space-padded) M minute (00-59) S
+	second (00-61) s seconds, same as the argument p "AM" or "PM" z,
+	Z three letter timezone (of the muck) % percent character U week
+	number (00-53); weeks start on Sunday and must contain 4 or more
+	days belonging to the year W same except weeks start on Monday
+      </p>
+      <p>
+	C equivalent to %a %b %e %H:%M:%S %Y c equivalent to %m/%d/%y x
+	equivalent to %m/%d/%y %H:%M:%S D date in format mm/dd/yy T, X
+	equivalent to %H:%M:%S R equivalent to %H:%M r equivalent to
+	%I:%M:%S %p
+      </p>
+      <p>
+	i similar to WHO list idle time (ie: ' 2d' or ' 5m' or ' 23s')
+      </p>
+      <p>
+	%t (tab) and %n (newline) are disabled on the Muck.
+      </p>
+
+      <hr>
+      <!-- pattern="stringcmp" -->
+      <h2>stringcmp ( s1 s2 -- i )</h2>
+      <p>
+	Compares strings s1 and s2. Returns 0 if they are equal,
+	otherwise returns the difference between the first non-matching
+	character in the strings.  For exam- ple, "a" "z" stringcmp
+	returns 25.  This function is not case sensitive, un- like
+	strcmp.
+      </p>
+
+      <hr>
+      <!-- pattern="strlen" -->
+      <h2>strlen ( s -- i )</h2>
+      <p>
+	Returns the length of string s.
+      </p>
+
+      <hr>
+      <!-- pattern="strncmp" -->
+      <h2>strncmp ( s1 s2 i -- i' )</h2>
+      <p>
+	Compares the first i characters in strings s1 and s2 (case
+	sensitive).  Return value is like strcmp.
+      </p>
+
+      <hr>
+      <!-- pattern="stringncmp" -->
+      <h2>stringncmp ( s1 s2 i -- i' )</h2>
+      <p>
+	Compares the first i characters in strings s1 and s2 (case
+	insensitive).  Return value is like stringcmp.
+      </p>
+
+      <hr>
+      <!-- pattern="subst" -->
+      <h2>subst ( s1 s2 s3 -- s )</h2>
+      <p>
+	s1 is the string to operate on, s2 is the string to change all
+	occurrences of s3 into, and s is resultant string.  For example:
+	"HEY_YOU_THIS_IS" " " "_" subst results in "HEY YOU THIS IS" s2
+	and s3 may be of any length.
+      </p>
+
+      <hr>
+      <!-- pattern="succ" -->
+      <h2>succ ( d -- s )</h2>
+      <p>
+	Takes object d and returns its success (@succ) string field s.
+      </p>
+
+      <hr>
+      <!-- pattern="swap" -->
+      <h2>swap ( x y -- y x )</h2>
+      <p>
+	Takes objects x and y on the stack and reverses their order.
+      </p>
+
+      <hr>
+      <!-- pattern="systime" -->
+      <h2>systime ( -- i )</h2>
+      <p>
+	Returns the number of seconds since the start of January 1,
+	1970.  See time.
+      </p>
+
+      <hr>
+      <!-- pattern="then" -->
+      <h2>then</h2>
+      <p>
+	See if.
+      </p>
+
+      <hr>
+      <!-- pattern="thing?" -->
+      <h2>thing? ( d -- i )</h2>
+      <p>
+	Returns 1 if object d is a thing, otherwise returns 0, See also
+	player?, pro- gram?, room?, exit?, ok?.
+      </p>
+
+      <hr>
+      <!-- pattern="time" -->
+      <h2>time ( -- s m h )</h2>
+      <p>
+	Returns the time of day as integers on the stack, seconds, then
+	minutes, then hours.  See systime.
+      </p>
+
+      <hr>
+      <!-- pattern="var &lt;name&gt;" -->
+      <h2>var &lt;name&gt;</h2>
+      <p>
+	Var is not a `true' primitive in that it must always be used
+	outside words and does not alter the stack in any way. When the
+	compiler sees a `var' statement, it allows the use of
+	&lt;name&gt; as a variable in all words sequentially defined
+	after the var declaration. See VARIABLES.
+      </p>
+
+      <hr>
+      <!-- pattern="variable" -->
+      <h2>variable ( i -- v )</h2>
+      <p>
+	Converts integer i to variable reference v. Of the pre-defined
+	variables, `me' corresponds to integer 0, `loc' to 1, and
+	`trigger' to 2. Thus: me @ and 0 variable @ will do the same
+	thing (returning the user's dbref). User-defined variables are
+	numbered sequentially starting at 3 by the compiler. Note that
+	these vari- able numbers can be used even if variables have not
+	been formally declared.  See @, !, and VAR.
+      </p>
+
+      <hr>
+      <!-- pattern="connections" -->
+      <h2>connections ( -- c1 c2 ... i )</h2>
+      <p>
+	Returns a list of connections to the Muck; a player connected
+	multiple times appears multiple times in the list.  The
+	connections are a separate type, not integers, and cannot be
+	operated on with arithmetic.  The connections are guaranteed
+	valid at least to the next `read', after which they might be
+	outdated.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="concount" -->
+      <h2>concount ( -- i )</h2>
+      <p>
+	Returns the number of connections to the Muck.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="conidle" -->
+      <h2>conidle ( c -- i )</h2>
+      <p>
+	Returns the number of seconds a connection is idle.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="contime" -->
+      <h2>contime ( c -- i )</h2>
+      <p>
+	Returns a time (see types) indicating when the connection
+	connected.  This time is the number of seconds since the start
+	of January 1, 1970 and is suitable for use with the `strftime'
+	function.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="condbref" -->
+      <h2>condbref ( c -- d )</h2>
+      <p>
+	Returns the dbref of the player that is on a given connection.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="conhost" -->
+      <h2>conhost ( c -- s )</h2>
+      <p>
+	Returns a string indicating the host name of the given
+	connection.  (Wizard- only.)  The string will be in IP number
+	form if the host can't be or hasn't yet been resolved.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="conboot" -->
+      <h2>conboot ( c -- )</h2>
+      <p>
+	Disconnects the specified connection after sending a "You have
+	been booted from the game." message.  This MUF word is
+	wizard-only; furthermore, the head wizard (usually #1) can't be
+	booted.
+      </p>
+      <p>
+	See types.  Also, some Mucks are not set up with this function
+	available.
+      </p>
+
+      <hr>
+      <!-- pattern="ADDRESSES, QUOTES, '" -->
+      <h2>ADDRESSES, QUOTES, '</h2>
+      <p>
+	The address of a function may be specified using the ' operator.
+	This operator works on functions, macroes, primitives, and
+	anonymous functions (in previous Muck versions it only worked on
+	functions); addresses can be passed around, stored in variables,
+	and passed to other programs.  They're called using the
+	`execute' word.
+      </p>
+      <p>
+	Examples of addresses: 'fun (where fun is a function name)
+	'.pmatch (macro) 'notify_except (primitive) ': me @ swap notify
+	; (anonymous function)
+      </p>
+
+      <hr>
+      <!-- pattern="ARGUMENTS" -->
+      <h2>ARGUMENTS</h2>
+      <p>
+	A program may be invoked by the player with a command-line
+	argument. This ar- gument is pushed on the stack before the
+	program is executed.  For example, if an exit "smell" is linked
+	to a program, typing "smell flower" will invoke the program with
+	the argument "flower" pushed on the stack. Arguments are always
+	strings, never integers.
+      </p>
+      <p>
+	When the user types a command that might use an action, Muck
+	tries to match all actions near the user.  If the action isn't
+	linked to a program, Muck matches exact names.  If it is linked
+	to a program, Muck checks all such ac- tions to find the one
+	that matches as many word(s) as possible.  For example, if you
+	type "get flower", Muck will first find an action named "get
+	flower" and then one named "get".  The rest of what you typed is
+	pushed on the stack as one string.  Thus, if "eat jelly
+	doughnut" is matched with "eat", "jelly doughnut" will be
+	pushed.  Even if an exact match is found (i.e., an exit named
+	"eat jelly doughnut") a null string ("") is pushed on the stack.
+	Thus, the program always starts with one element on the stack.
+      </p>
+      <p>
+	TinyMUCK searches for exit matches in this order: room exits,
+	player inventory exits, room contents exits, player exits,
+	parent room exits.
+      </p>
+      <p>
+	If the program is in a @# field, the command-line argument is
+	the string after the number.  For example, if a player looks at
+	something whose description is "@1000 red", program 1000 will be
+	invoked with the word "red" on the stack.
+      </p>
+      <p>
+	See EXECUTION, LINKING, LOCKING, and `explode'.
+      </p>
+
+      <hr>
+      <!-- pattern="COMMENTS" -->
+      <h2>COMMENTS</h2>
+      <p>
+	Comments in MUF are surrounded by parentheses. Any characters in
+	a program between two parentheses (e.g. `(argle)') will be
+	ignored by the compiler, and do not count as part of the
+	program.
+      </p>
+
+      <hr>
+      <!-- pattern="EXECUTION" -->
+      <h2>EXECUTION</h2>
+      <p>
+	If a program has had an exit linked to it or an object locked to
+	it, then whenever someone tries to use that object, it may be
+	executed (see LINKING and LOCKING for more details).
+      </p>
+      <p>
+	Program execution starts with the last word defined in the
+	program; when the program calls other programs execution is
+	transferred to the last word of that other program.
+      </p>
+      <p>
+	When a program is initially executed by an exit that is linked
+	to it, at least one word will always be on top of the stack. See
+	ARGUMENTS for more details.  When a program is executed by a
+	locked object, the stack will normally start empty.  See also
+	STATEMENTS and WORDS.
+      </p>
+
+      <hr>
+      <!-- pattern="HOME" -->
+      <h2>HOME</h2>
+      <p>
+	Dbref #-3 refers to the home of a thing or player; things linked
+	to `home' are linked there, and doing a `moveto' which moves
+	something there moves it home.  Programs always have a `home'
+	which is the program owner.
+      </p>
+
+      <hr>
+      <!-- pattern="INSTRUCTION-COUNT" -->
+      <h2>INSTRUCTION-COUNT</h2>
+      <p>
+	Programs may normally execute 50000 instructions before a
+	`read'.  Programs with wizard permissions do not have this
+	restriction.
+      </p>
+
+      <hr>
+      <!-- pattern="LINKING" -->
+      <h2>LINKING</h2>
+      <p>
+	You may @link exits (but nothing else) to a program. A program
+	will then exe- cute every time a player goes through that
+	exit. Multiple exits may be linked to a single program.  See
+	EXECUTION, and various entries in the help for Muck including
+	@ACTION, @LINK, @OPEN, ACTIONS and LINKING.
+      </p>
+
+      <hr>
+      <!-- pattern="LOCKING" -->
+      <h2>LOCKING</h2>
+      <p>
+	You may @lock any kind of object to a program.  The program will
+	then execute every time a player TRIES to go through that exit,
+	pick up that thing or pro- gram, look at that room, or rob that
+	player.  The lock succeeds if the program finishes with a 1 on
+	the stack, and fails if it finishes with 0.  See EXECU- TION and
+	LINKING.
+      </p>
+
+      <hr>
+      <!-- pattern="MACROS, MACROES" -->
+      <h2>MACROS, MACROES</h2>
+      <p>
+	Macroes are defined with the command, within the MUF editor, def
+	name body To list the definition of a macro that was previously
+	defined, name show The command to delete a macro (which must
+	have been created by you) is name kill To use a macro in a
+	program, precede its name with a . symbol (period).  All macroes
+	are global; any MUF programmer can see them and use them.
+      </p>
+
+      <hr>
+      <!-- pattern="PROPERTIES" -->
+      <h2>PROPERTIES</h2>
+      <p>
+	All rooms, players and things have properties. These may be set
+	by either players or programs.  However, players may only set
+	properties to strings, while programs may set them to either
+	strings or integers.  Thus, things such as hit points, dollars,
+	strength, etc., can be set.
+      </p>
+      <p>
+	A property whose name starts with a `_' or `.' can be only set
+	or erased by programs run by or SETUID to the owner of the
+	object with the property.  If the name starts with a `.', this
+	restriction also applies to reading it.
+      </p>
+      <p>
+	Remember, though, that players can always `@set me = :' which
+	erases all their properties.  Be prepared to always use a
+	default value when trying to read properties, or set the
+	properties on an object of your own instead of on the player.
+      </p>
+      <p>
+	See addprop, getpropdbref, getpropstr, getproptime, getpropval,
+	remove_prop, and setprop.
+      </p>
+
+      <hr>
+      <!-- pattern="RECURSION" -->
+      <h2>RECURSION</h2>
+      <p>
+	Recursion refers to a program word calling itself.  This is
+	often used to replace iterative loops.  See RECURSION.
+      </p>
+
+      <hr>
+      <!-- pattern="STACK" -->
+      <h2>STACK</h2>
+      <p>
+	In MUF, all statements are pushed on the stack when a running
+	program reaches them during execution, except primitives and
+	user-defined words, which are ex- ecuted, and variables, whose
+	addresses are pushed on the stack (and may be operated on by the
+	@ and ! primitives). The maximum number of elements that can be
+	pushed on the stack is about 512. See EXECUTION, STATEMENTS,
+	VARIABLES and WORDS.
+      </p>
+
+      <hr>
+      <!-- pattern="TYPES" -->
+      <h2>TYPES</h2>
+      <p>
+	Available types are integers, strings, database references,
+	variables, func- tions, and optionally connections.  Integers,
+	strings, database references, and variables and functions can be
+	specified in a MUF program; connections cannot.  Not all MUF
+	words work on all types.  See VARIABLES.
+      </p>
+
+      <hr>
+      <!-- pattern="USER" -->
+      <h2>USER</h2>
+      <p>
+	The person using the program (as opposed to the programmer).
+	Non-setuid pro- grams run according to the permissions of the
+	user rather than the programmer who owns the program.  The
+	variables ME and LOC refer to the user. See VARIABLES.
+      </p>
+
+      <hr>
+      <!-- pattern="VARIABLES" -->
+      <h2>VARIABLES</h2>
+      <p>
+	Variables must be defined outside of words using the `var'
+	primitive, and are global the whole program.  When a variable
+	name is a program statement, its address is pushed on the stack.
+	The program can then use the primitive `@' to retrieve is value,
+	or `!'  to load a value into it.
+      </p>
+      <p>
+	The variables ME, LOC and TRIGGER are pre-defined in MUF. ME
+	stores the dbref of the program's user. LOC stores the dbref of
+	his location.  TRIGGER stores the dbref of the exit/thing which
+	caused the program to be executed.  These variables may be set;
+	for a non-settable ME and LOC, use `"me" match' and `"here"
+	match'.  See USER, @, and !.
+      </p>
+
+      <hr>
+      <!-- pattern="WORDS" -->
+      <h2>WORDS</h2>
+      <p>
+	A word in MUF begins with a colon (`:') and ends with a
+	semicolon (`;').  The statement after the colon is the name of
+	the word, and the remaining state- ments are the actual executed
+	code of the word.  Thus, a word's form is:
+      </p>
+      <p>
+        : {word name} {body of word} ;
+      </p>
+      <p>
+	Obviously, a program may contain many words. Calling a word is
+	accomplished by using its name. A word may not be called before
+	it has been defined, though a word can call itself.  See CALL,
+	EXECUTION, RECURSION, and STATEMENTS.
+      </p>
+
+      <hr>
+      <!-- pattern="OBJECTS" -->
+      <h2>OBJECTS</h2>
+      <p>
+	Database objects are specified with #, so object number 10 is
+	specified with `#10' or `10 dbref'.  There are three special
+	objects:
+      </p>
+      <p>
+	#-1 is returned by `match' and `rmatch' and a few other MUF
+	words to indicate no object.
+      </p>
+      <p>
+	#-2 is returned by `match' and `rmatch' to indicate that the
+	result of the match is ambiguous.
+      </p>
+      <p>
+	#-3 is returned by `match' and `getlink' to indicate the special
+	location `home'.  It may be used in `moveto' to send an object
+	home.
+      </p>
+
+      <hr>
+      <!-- pattern="LOOPING" -->
+      <h2>LOOPING</h2>
+      <p>
+	There are no looping constructs in standard MUF.  Loops may be
+	simulated with recursion; however, tail recursion is not
+	specially treated, and the stack will overflow at 512 levels.
+      </p>
+
+      <hr>
+      <!-- pattern="@Q" -->
+      <h2>@Q</h2>
+      <p>
+	@Q, when typed as input to a `read' (see `read') will
+	immediately quit all programs and return control to the user.
+      </p>
+
+      <hr>
+      <!-- pattern="PERMISSIONS" -->
+      <h2>PERMISSIONS</h2>
+      <p>
+	Normally, programs run with the permissions of the person
+	running the program.  If the program is S (SETUID), it instead
+	runs with the permissions of the program owner.  Sometimes you
+	may need to have parts of your program run with each set of
+	permissions, in which case you have to have two programs which
+	call each other, one SETUID and one not.
+      </p>
+      <p>
+	Programs set W run with wizard permissions if owned by a wizard.
+	If the program is not set W, and is run by a wizard or SETUID
+	and owned by a wizard, the program runs with only the
+	permissions the wizard would have as a normal player.  (The
+	exception is that if a wizard runs a program, the `match' MUF
+	word will match any object in the database if given a string of
+	the form #number or *player.)
+      </p>
+      <p>
+	To have permission to run a program at all, you must be the
+	program owner, the program must be LINK_OK, or you must be
+	running the program via something owned by the program owner
+	(which usually means you're using an action owned by the program
+	owner).
+      </p>
+
+      <hr>
+      <!-- pattern="TUTORIAL" -->
+      <h2>TUTORIAL</h2>
+      <p>
+	Type "man muf-tutorial-1, muf-tutorial-2, and muf-tutorial-3"
+	for the MUF tutorial.  This is a number of pages long.
+      </p>
+      <p>
+	It is also hopelessly obsolete.  Not actually wrong, but placed
+	here (with a few updates) mostly for completeness.  If you have
+	a useful substitute, please write to the maintainer of 2.3.
+      </p>
+
+      <hr>
+      <!-- pattern="muf-tutorial-1" -->
+      Zen in the Art of the Towers of Hanoi
+      (or The Basics of MUF in 10 megs or less.)
+    </p>
+      <p>
+	MUCK 2.1 version: Stinglai MUCK 2.2 update: chupchup MUCK 2.3
+	update: Jiro/Mizue
+      </p>
+      <p>
+      </p>
+      <p>
+	This is an introduction to MUF, a dialect/subset of forth used
+	to do really really neat things with TinyMuck 2.3.  This intro
+	was designed to be read be- fore any of the other MUF
+	information; it (hopefully) should supply you with a fair idea
+	of what MUF is all about.  It's written at a
+	non-programming-stud level, all the better for understanding.
+      </p>
+      <p>
+      </p>
+      <p>
+	All MUF programs work by performing operations on a stack.
+      </p>
+      <p>
+	For all you non-programmer types, a stack is just a tool used to
+	store infor- mation.  Information is manipulated by "pushing"
+	things onto the stack and "popping" things off.  The last thing
+	you've placed on a stack is always the next thing you would take
+	off if you tried; it's like piling objects on top of each other,
+	when the only thing you can remove from the pile is the thing on
+	top.  For example, if you were to push the number 23, then push
+	the number 42, and then pop a value off the stack, you would get
+	42.  If you were to pop another value off the stack after this,
+	you would get 23.  If you were to try and pop another value, you
+	would get an error, since the stack would now be empty.  (This
+	is a "stack underflow.")
+      </p>
+      <p>
+	The basic procedural unit in MUF is called the word.  A word is
+	simply a se- quence of instructions.  In program text, a word
+	always starts with a colon, then the word's name.  A semicolon
+	marks the end of a word.
+      </p>
+      <p>
+	For example:
+      </p>
+      <p>
+	: detonate_explosives (text of word here) ;
+      </p>
+      <p>
+	would define a word called detonate_explosives.
+      </p>
+      <p>
+	Parentheses are used to delineate program comments; everything
+	inside comments is ignored by the computer.  The
+	detonate_explosives word above, if run as shown, would do
+	absolutely nothing.
+      </p>
+      <p>
+	Indentation in MUF is arbitrary and serves to make the program
+	more readable to people.
+      </p>
+      <p>
+      </p>
+      <p>
+	In MUF, there are several types of constant values.  Integers
+	and strings are familiar to those of you who know regular
+	programming languages; MUF also uses dbrefs.  There are also
+	variables (variable addresses), function addresses, times, and
+	possibly connections.  Any type of value is stored and retrieved
+	from the stack as a single unit.  (The string "Hello, Sailor!",
+	for example, would be stored on the stack in its entirety:
+	"Hello, Sailor!"; it would not be stored byte-by-byte or
+	word-by-word or in any other such silly way.)  To push a
+	constant onto the stack, you only need to state its value.  The
+	follow- ing is a completely legitimate procedure:
+      </p>
+      <p>
+	: pointless_word "Old Man" "I'm" 37 "What?"  37 "Not old!"  ;
+      </p>
+      <p>
+	However, run by itself, it wouldn't do anything visible to the
+	user.  It would, however, create a stack which looks like this:
+      </p>
+      <p>
+	("Old Man" "I'm" 37 "What?"  37 "Not old!")
+      </p>
+      <p>
+	In the above stack, "Old Man" is the value on the bottom.  "Not
+	old!" is the value on top of the stack, and would be the next
+	value retrieved.
+      </p>
+      <p>
+	Formatting of programs is arbitrary with respect to spacing.
+	For instance, the above example could be written as
+      </p>
+      <p>
+	: pointless_word "Old Man" "I'm" 37 "What?" 37 "Not old!" ;
+      </p>
+      <p>
+	Functions which are available in the standard MUF library take
+	values from the top of the stack, do things with them, and
+	usually leave something new back on top of the stack.  We
+	discuss below some examples of them.
+      </p>
+      <p>
+	The + routine takes the top two integers from the stack, adds
+	them together, and leaves the result on top of the stack.  In
+	order to easily describe what functions like this do, a certain
+	stack notation is used: for +, this would be (i1 i2 -- z).
+	What's inside those parenthesis is a sort of "Before and After"
+	synopsis; the things to the left of the double-dash are the
+	"before", and those to the right are the "after".  (i1 i2 -- i)
+	says that the function in question takes two integers away and
+	leaves one.  The letters used here to tell what kind of data a
+	stack object can be are: i for integer, d for data- base object,
+	s for string, v for variable, and x or y to mean something that
+	can be more than one type.
+      </p>
+      <p>
+	Here are short descriptions of the procedures listed above so
+	you can get the hang of how they work:
+      </p>
+      <p>
+      </p>
+      <p>
+	+ (i1 i2 -- i) Adds i1 and i2 together.  The word
+      </p>
+      <p>
+	: add_some_stuff 2 3 + ;
+      </p>
+      <p>
+	will return 5.  The word
+      </p>
+      <p>
+	: add_some_more_stuff 2 3 4 5 + + + ;
+      </p>
+      <p>
+	will return 14.  When add_some_more_stuff first reaches the "+ +
+	+" line, the stack will be (2 3 4 5).
+      </p>
+      <p>
+	The first + changes the stack to look like: (2 3 9).
+      </p>
+      <p>
+	The next causes: (2 12).
+      </p>
+      <p>
+	The final + returns: (14).
+      </p>
+      <p>
+      </p>
+      <p>
+	- (i1 i2 -- i) Subtracts i2 from i1.
+      </p>
+      <p>
+	: subtract_arbitrary_things 10 7 - ;
+      </p>
+      <p>
+	will return 3 on top of the stack.  The word
+      </p>
+      <p>
+	: subtract_more_arbitrary_things 10 7 1 - - ;
+      </p>
+      <p>
+	will return 4 on top of the stack.  Before subtracting, the
+	stack looks like: (10 7 1).
+      </p>
+      <p>
+	The first subtraction changes it to (10 6), and the final
+	subtraction to (4).  Note that this is not the same as
+      </p>
+      <p>
+	: subtract_more_arbitrary_things 10 7 - 1 - ;
+      </p>
+      <p>
+	which would return a value of 2.  (Can you see why?)
+      </p>
+      <p>
+	The words *, %, and / work similarly to provide multiplication,
+	modulus, and division operations.
+      </p>
+      <p>
+      </p>
+      <p>
+	swap (x y -- y x) Switches the top two things on the stack.
+	This is useful for when you want to know the value of x but want
+	to save y for later use.
+      </p>
+      <p>
+	: swap_stuff_around 1 5 2 swap 3 "Three, sir!"  swap "Boom!"  ;
+      </p>
+      <p>
+	will, before it gets to the first swap, create a stack of (1 5
+	2).  After the swap, the stack looks like (1 2 5).  It then
+	accumulates another 3 and a string constant, to look like (1 2 5
+	3 "Three, sir!")  It swaps the last two again and adds another
+	string, so the stack looks like: (1 2 5 "Three, sir!"  3
+	"Boom!").
+      </p>
+      <p>
+      </p>
+      <p>
+	pop (x --) Throws away the value on top of the stack.  As shown
+	in the stack diagram, it returns nothing but takes something,
+	and so decreases the stack's total size.  Useful when you really
+	really want to get to the next thing on the stack so bad you
+	don't care what's on top.  The word:
+      </p>
+      <p>
+	: needless_popping_waste "Immanuel Kant" "Heideggar" pop "David
+	Hume" "Schoppenhauer" "Hegel" pop pop ;
+      </p>
+      <p>
+	would leave the stack looking like ("Immanuel Kant" "David
+	Hume").
+      </p>
+      <p>
+      </p>
+      <p>
+	dup (x -- x x) copies the top stack item.  The word
+      </p>
+      <p>
+	: dup_example "Row" dup dup "Your" "Boat" ;
+      </p>
+
+      <hr>
+      <!-- pattern="muf-tutorial-2" -->
+      would leave the stack as ("Row" "Row" "Row" "Your" "Boat").
+    </p>
+      <p>
+	random (-- i) Doesn't even look at the stack, but piles a really
+	really random integer on top.  The word:
+      </p>
+      <p>
+	: feel_lucky_punk?  random random random ;
+      </p>
+      <p>
+	would return a stack of three random numbers.
+      </p>
+      <p>
+      </p>
+      <p>
+	Because of the way the stack works, variables aren't as
+	necessary in MUF as they are in other languages, but they can be
+	used to simplify stack-handling operations.  To declare a
+	variable, you simply add the line "var &lt;name&gt;" at the
+	beginning of your program.  Variables are of no specific type; a
+	variable which holds an integer can turn around the next second
+	and hold a string if it's feeling haughty enough.
+      </p>
+      <p>
+	The following words are important when dealing with variables:
+      </p>
+      <p>
+	! (x v --) Set variable v to hold value x.  The program:
+      </p>
+      <p>
+      </p>
+      <p>
+	var answer
+      </p>
+      <p>
+	: multiply-and-store 6 9 * answer !  ;
+      </p>
+      <p>
+	will give the variable "answer" the value 42.
+      </p>
+      <p>
+      </p>
+      <p>
+	@ (v -- x) This word (pronounced "fetch") retrieves the value of
+	a variable and puts it on the stack.  You should remember this
+	since a common mistake among beginning MUF programmers is to
+	forget to put fetch symbols in their programs.  The word
+      </p>
+      <p>
+	garply
+      </p>
+      <p>
+	by itself stands for the variable "garply", while the expression
+      </p>
+      <p>
+	garply @
+      </p>
+      <p>
+	stands for the value of that same variable.  If you're familiar
+	with Lisp, this is analogous to the difference between garply
+	and (garply).
+      </p>
+      <p>
+	The program:
+      </p>
+      <p>
+	var biggles var fang : more_silly_manipulation 10 biggles !  24
+	fang !  biggles @ fang @ + ;
+      </p>
+      <p>
+	will return the value 34 on top of the stack.  The program:
+      </p>
+      <p>
+	var biggles var fang : more_silly_manipulation 10 biggles !  24
+	fang !  biggles fang + ;
+      </p>
+      <p>
+	is wrong, and will return an "Invalid argument type" error.
+      </p>
+      <p>
+      </p>
+      <p>
+	The next type of value you need to understand is the database
+	reference.  They're specified with a # in front of a number;
+	'#2032' represents item 2032 in the Muck database.  Because MUF
+	was designed for Muck, there are lots of special builtin words
+	which work on database references, as well as three special
+	predefined variables with values that are database references.
+      </p>
+      <p>
+	These variables are "me", "loc", and "trigger", where "me" holds
+	the player's database reference, loc holds the player's
+	location's database reference, and trigger holds the database
+	reference of the object that the program was linked to, locked
+	to, or in a field of.
+      </p>
+      <p>
+	me @ will return the player's item reference, while loc @ will
+	return the room s/he is in.  trigger @ returns the item that
+	triggered the current program, whether it is a player, exit,
+	room, whatever.  A useful word to know is:
+      </p>
+      <p>
+	name (d -- s) Where d is a db reference and s is a string, name
+	returns the name of item x.
+      </p>
+      <p>
+      </p>
+      <p>
+	Now that you know about me @, another Muck function becomes
+	useful.  Its synopsis is:
+      </p>
+      <p>
+	notify (d s --) When d is a player, notify prints string s out
+	to user d.  The program
+      </p>
+      <p>
+	: warn me @ "There is someone behind the next column waiting to
+	jump you."  notify ;
+      </p>
+      <p>
+	would print said message on the user's screen.
+      </p>
+      <p>
+      </p>
+      <p>
+	Before you can really start writing neat stuff in Muck, there is
+	one more thing you need to know about: control flow.
+      </p>
+      <p>
+	Certain MUF functions return values which are "true" or "false".
+	In MUF, there are several "false" values, depending on the type.
+	0 is false for in- tegers, "" is false for strings, and #-1 is
+	false for db references.  Every- thing else counts as "true".
+	For instance, consider the equals operator:
+      </p>
+      <p>
+	= (i1 i2 -- i) If integers i1 and i2 are equal, this returns 1
+	(which is "true"); if the integers aren't equal, this returns 0
+	(which is "false").  Therefore the word
+      </p>
+      <p>
+	: nonequals
+        2 3 =
+	;
+      </p>
+      <p>
+	always returns 0.
+      </p>
+      <p>
+	dbcmp (d1 d2 -- i)
+	works exactly like equals, except that it takes database references.  It still
+	returns the integers 0 or 1.
+      </p>
+      <p>
+	strcmp (s1 s2 -- i)
+	compares strings, but works in reverse: it returns 0 ("false") when the
+	strings are not equal, and returns "true" when they are.  The reason for this
+	is so that it can return various values to indicate that one string is alpha-
+	betically before another.  (All these values are "true").
+      </p>
+      <p>
+	Another function is useful: negation.
+      </p>
+      <p>
+	not (x -- i)
+	If x is true, it returns 0 (which is a "false" value); if x isn't true, it
+	returns 1 (which is a "true" value).  You can use it on many different types
+	of values, but it always returns the integer 0 or 1.
+      </p>
+      <p>
+	Values of true and false are useful with if/else/then statements.  The
+	if/else/then statement selects between two courses of action depending on
+	whether a result is true or not.  The way it works is this:  If pulls an item
+	off the stack.  If the item is not 0, it executes everything between the IF
+	and the ELSE.  Otherwise it executes everything between the ELSE and the THEN.
+	In either case, execution continues after the THEN.  The ELSE is optional.
+      </p>
+      <p>
+	The name of this construction as if/else/then can be somewhat confusing, as it
+	certainly doesn't work quite like the if/then/else of other languages.
+      </p>
+      <p>
+	The word:
+      </p>
+      <p>
+	: word
+        2 3 =
+        if me @ "Your computer is broken!" notify
+        else me @ "Your computer isn't _too_ broken." notify
+        then
+        me @ "Done executing this word." notify
+	;
+      </p>
+      <p>
+	will print "Your computer isn't _too_ broken." to the user, unless something
+	is really screwy with the math, and it thinks 2 equals 3, in which case it will
+	print "Your computer is broken!".  In any case, it will then print "Done
+	executing this word."
+      </p>
+      <p>
+	: ring
+        me @ name
+        dup
+        "Leon" strcmp not if
+	pop
+	me @ "The doorbell rings and rings, but Priss ignores you." notify
+        else
+	print_greeting_message
+        then
+	;
+      </p>
+      <p>
+	is a more complicated example.  The basic structure of this example is that it
+	checks your name.  If your name is Leon, it prints the ignore message.  (To
+	check if your name is Leon, the `strcmp' must be followed by `not', since
+	`strcmp' returns a false value if the strings are equal, instead of when they
+	aren't.)  Otherwise, it executes the word `print_greeting_message'.  Presum-
+	ably, you defined a word with such a name elsewhere, since there isn't any
+	built-in word with that name.
+      </p>
+      <p>
+	But what's the reason for the `dup' and `pop'?  Well, suppose
+	print_greeting_message needs to know the name to do its stuff.  (Of course, it
+	could do the `me @ name' again, but we'll ignore that since this is just a
+	sample program; in a real program, it might not be so easy to get the string
+	again.)  The sequence `"Leon" strcmp not if' does check to see if your name is
+	Leon; but it also removes the name, whatever it is, from the top of the stack.
+	If one of the if/else/then clauses needs to use the name, we have to make an
+	extra copy beforehand.  And once we do this, we find that _both_ clauses start
+	with this extra copy still on the stack, so we have to pop it away in the
+	clause that doesn't use it.
+      </p>
+
+      <hr>
+      <!-- pattern="muf-tutorial-3" -->
+      *SAMPLE PROGRAM*
+    </p>
+      <p>
+	Ok, so you've been reading this whole thing so far, and you really want to
+	use this stuff to do something interesting.  The following program does
+	something interesting, and uses the function
+      </p>
+      <p>
+	strcat (s1 s2 -- s)
+	Concatenate strings s1 and s2, returning the result.
+      </p>
+      <p>
+	it also uses
+      </p>
+      <p>
+	location (d -- d')
+	Takes db reference d and returns d', the db reference for its location.
+      </p>
+      <p>
+      </p>
+      <p>
+	: far_vision
+        #2032        (2032 is Sylia's object number.               )
+        dup           (Make 2 copies; we're about to use 1.         )
+        name          (Sylia might change her name in the future, so)
+	(instead of using "Sylia" here we just look up)
+	(her name.                                    )
+      </p>
+      <p>
+        " is currently in "
+        strcat                (Attach name to sentence so far         )
+        swap                  (Flip the sentence back so we can get at)
+	(Sylia's dbref again.                   )
+      </p>
+      <p>
+	(Sylia's dbref is now at top of stack.   )
+      </p>
+      <p>
+        location      (Where is Sylia?                         )
+        name          (What is the name of the place she is in?)
+        "." strcat strcat
+      </p>
+      <p>
+        me @ swap notify    (Tell the player where Sylia is.)
+      </p>
+      <p>
+        #2055         (Sylia's hardsuit is #2055.        )
+        location
+        #2032         (Sylia again                       )
+        dbcmp         (Has she got her hardsuit with her?)
+        if me @ "Watch out-- she's wearing her hardsuit!" notify then
+	;
+      </p>
+      <p>
+      </p>
+      <p>
+	Note that this program uses no variables (except for the universally
+	defined ME variable.)
+      </p>
+      <p>
+      </p>
+      <p>
+	In Muck, this program would be attached to, say, a homing device or a magic
+	staff.  Now, if Boomer ever wants to find Sylia, he can, and he'll even know
+	if she's defenseless or she's got her armor.
+      </p>
+      <p>
+	Without the comments and spaced out like you might see normally, this program
+	looks like:
+      </p>
+      <p>
+	: far_vision
+        #2032 dup
+        name " is currently in " strcat
+        swap location name
+        "." strcat strcat                   (Now we know where she is.)
+      </p>
+      <p>
+        me @ swap notify
+      </p>
+      <p>
+        #2055 location
+        #2032 dbcmp
+        if me @ "Watch out-- she's wearing her hardsuit!" notify
+        then
+	;
+      </p>
+      <p>
+      </p>
+      <p>
+	Words can also be called by other words; to do this, you treat your other
+	words just like standard functions when you use them.  When you have more than
+	one word in the same program, the word which is listed *last* is the one exe-
+	cuted, and all the ones listed before it are subroutines.  The above program
+	could be rewritten:
+      </p>
+      <p>
+	: sylia-identity
+        #2032
+	;
+      </p>
+      <p>
+	: far_vision
+        sylia-identity dup
+        name " is currently in " strcat
+        swap location name
+        "." strcat strcat                   (Now we know where she is.)
+      </p>
+      <p>
+        me @ swap notify
+      </p>
+      <p>
+        #2055
+        location sylia-identity dbcmp (Using sylia-identity and spacing the )
+	(commands like this makes this bit a  )
+	(little easier to understand.         )
+      </p>
+      <p>
+        if me @ "Watch out-- she's wearing her hardsuit!" notify
+        then
+	;
+      </p>
+      <p>
+      </p>
+      <p>
+	If you wanted to use standard library functions, you could rewrite the
+	program again.  For instance, the pmatch library function gives the database
+	reference to a specific player; the first function could have been written as
+      </p>
+      <p>
+	: sylia-identity
+        "Sylia" .pmatch
+	;
+      </p>
+
+      <hr>
+      <!-- pattern="quickref" -->
+      <h2>quickref</h2>
+      <p>
+	The MUF Cheat-Sheet, as seen by Sammael (Arthur, The., etc)
+	(Modified by Jiro/Mizue 7/24/92)
+	-or-
+	Reference manual for MUCK Forth ("MUF")  -terse
+      </p>
+      <p>
+	ENTERING EDITING MODE
+        @prog &lt;program name&gt;    (creates a new program if none match)
+        @edit &lt;program name or number&gt;
+      </p>
+      <p>
+	EDITING COMMANDS
+        &lt;number&gt; i                              insert before &lt;number&gt;
+        .                                       exit insert mode
+        c                                       compile
+        &lt;number1&gt; &lt;number2&gt; l                   list
+        &lt;number1&gt; &lt;number2&gt; d                   delete
+        &lt;letter&gt; &lt;letter&gt;   a                   show macros (abridged)
+        &lt;letter&gt; &lt;letter&gt;   s                   show macros (long)
+        def &lt;name&gt; &lt;body&gt;                       define macro
+        &lt;name&gt; k                                delete macro
+        &lt;program#&gt; v                            view program header
+        h                                       help on edit mode
+        u                                       uncompile
+        q                                       quit editor mode
+      </p>
+      <p>
+	PRIMITIVE TERMINOLOGY
+      </p>
+      <p>
+        v       (example: me, varname)          type variable
+        d       (example: #0, #-1, #333)        type dbref
+        i       (example: 1, 2, 3, -100)        type int (boolean)
+        s       (example: "", "string")         type string
+        a       (example: 'functionname)        type address (word)
+        c       (not in all mucks; untypeable)  type connection
+	x, y					any of these
+      </p>
+      <p>
+	SYNTAX
+      </p>
+      <p>
+        ( ... )                           commments
+        :                                 begin user-def word
+        ;                                 end user-def word
+        var &lt;VARNAME&gt;                     variable declaration
+      </p>
+      <p>
+        if              ( i -- )
+        else            ( -- )
+        then            ( -- )
+        exit            ( -- )
+        execute         ( a -- ??? )
+        pop             ( x -- )
+        dup             ( x -- x x )
+        swap            ( x y -- y x )
+        over            ( x y -- x y x )
+        rot             ( x y z -- y z x )
+        rotate          ( ni ... n1 i -- n(i-1) ... n1 ni )
+        pick            ( ni ... n1 i -- n1 ni )
+        put             ( ni ... n1 x i -- x ... n1 )
+        depth           ( -- i )
+      </p>
+      <p>
+        !               ( x v -- )        store value x in var v,
+	value may be any type data
+        @               ( v -- x )        fetch value x from var v
+        atoi            ( s -- i )        string --&gt; integer
+        intostr         ( i -- s )        integer || dbref --&gt; string
+        dbref           ( i -- d )        integer --&gt; dbref
+        int             ( x -- i )        VAR || object --&gt; integer
+        variable        ( i -- v )        integer --&gt; VAR ref
+      </p>
+      <p>
+        prog            ( -- d )          current program
+        self            ( -- a )          address of current function
+        dbtop           ( -- d )          top of database
+      </p>
+      <p>
+        + - * / %       ( i1 i2 -- i )          
+        &lt; &gt; = &lt;= &gt;=     ( i1 i2 -- i )
+        strcmp, stringcmp
+	( s1 s2 -- i )    strcmp == case sensitive
+        strncmp, stringncmp
+	( s1 s2 n -- i )  compares only n letters
+        number?         ( s -- i )
+        dbcmp           ( d1 d2 -- i )
+        and  or         ( i1 i2 -- i )
+        not             ( i -- i' )
+      </p>
+      <p>
+        strlen          ( s -- i )
+        strcat          ( s1 s2 -- s )
+        instr           ( s1 s2 -- i )    finds string s2 within s1
+        strcut          ( s i -- s1 s2 )  cuts string at position i
+        explode         ( s1 s2 -- ... i )s2 is the partition, len &gt;0
+        subst           ( s1 s2 s3 -- s ) string, replacement, tobesub
+        pronoun_sub     ( d s -- s' )     does % subs a la osucc/ofail
+      </p>
+      <p>
+        read            ( -- s )
+        notify          ( d s -- )        player, message 
+        notify_except   ( d1 d2 s -- )    place, player, message 
+        pennies         ( d -- i )
+        addpennies      ( d i -- )        player, pennies
+        random          ( -- i )
+      </p>
+      <p>
+        getpropdbref    ( d s -- d )      #-1 if none
+        getpropstr      ( d s -- s )      "" if none
+        getpropval      ( d s -- i )      zero if none
+        addprop         ( d s1 s2 i -- )  ignores i unless s2 is ""  [obsolete]
+        setprop         ( d s x -- )      sets string, int, or dbref
+        remove_prop     ( d s -- )
+      </p>
+      <p>
+        name, desc, succ, fail, drop, osucc, ofail, odrop
+	( d -- s )        retrieve message
+      </p>
+      <p>
+        setname, setdesc, setsucc, setfail, setdrop, setosucc, setofail,
+        setodrop        ( d s -- )        set message
+      </p>
+      <p>
+        player?, thing?, room?, program?, exit?, ok?
+	( d -- i )        boolean
+      </p>
+      <p>
+        location        ( d -- d' )
+        owner           ( d -- d' )
+        moveto          ( d1 d2 -- )      moves d1 to d2
+        check_moveto    ( d1 d2 -- s )    null, or error string if not movable
+        set             ( d s -- )        object, string (flag)
+        flag?           ( d s -- i )      object, string, boolean
+        call            ( d -- ??? )      call remote program
+        match           ( s -- d )        thing, dbref (#-1 = NOTHING,
+	#-2 = AMBIGUOUS, #-3 = HOME)
+        rmatch          ( d s -- d )      object, thing, dbref           
+        copyobj         ( d -- d' )       returns dbref of new object
+        contents        ( d -- ... i )    returns stack of dbrefs and i
+      </p>
+      <p>
+        systime         ( -- i )          seconds since January 1, 1970
+        strftime        ( i s -- s1 )     formats time according to string
+      </p>
+      <p>
+        online          ( -- d d ... i )
+	returns list of and number of users
+        awake?          ( d -- i )        returns number of connections
+	
+        [ the connection primitives are optional ]
+        connections     ( -- c c ... i )
+	returns list of/number of connections
+        concount        ( -- i )          returns number of connections
+        conidle         ( c -- i )        idle time, in seconds
+        contime         ( c -- i )        when connected
+        condbref        ( c -- d )        player corresponding to connection
+        conhost         ( c -- s )        host name (wiz-only)
+        conboot         ( c -- )          boots player (wiz-only)
+      </p>
+
+
+      <p></p>
+      <hr>
+      <address>
+        <a href="http://oj.egbt.org/dmoore/">David Moore</a>,
+        <a href="mailto:dmoore@ucsd.edu">dmoore@ucsd.edu</a>
+      </address>
+      <!-- Created: Fri Oct 11 12:35:51 PDT 1996 -->
+      <!-- hhmts start -->
+Last modified: Fri Oct 11 16:19:28 PDT 
+<!-- hhmts end -->
+    </bodytext>
+  </body>
+  <!--
+  Local variables:
+  mode: html
+  eval: (save-excursion (goto-char (point-max)) (sgml-indent-or-tab))
+  End:
+  -->
+</html>

@@ -1,0 +1,35 @@
+; Format:
+; <host pattern>  [!]<connection|creation|#<dbref>>
+; The lowest line in the file to match is used.
+; Host patterns can include '*'.  To be extra sure when your
+; name server goes down, you should use both numeric and
+; resolved names.  This is not usually a problem in 2.3 since it
+; caches host names.
+
+; Turn on these two lines to only let people connect from
+; the machine the mud is on.
+;*		!connection
+;localhost	connection
+ 
+; Make people register.
+jaguar.csc.wsu.edu	!creation	; TDS
+*.gnu.ai.mit.edu	!creation	; free user account machines 
+*                       !creation       ; make everyone register
+
+
+; To lock out everyone but your wizards, first lock out everyone,
+; then selectively let your wizards back in.  If you have specific
+; host names for your wizards (like suggested below), then you'd only
+; need to put in the first name to lock everyone else out.
+;*			!#*
+;*			#1
+
+; Tricks to make your wizard accounts slightly more secure.
+; Set the only sites that certain players can log on from.
+; The * ! line locks out everyone, then the next lines selectively
+; add back access.
+
+; Wizard 
+;*			!#1
+;localhost		#1
+;OJ's.machine		#1		; Historical entry.

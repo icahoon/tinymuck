@@ -1,0 +1,90 @@
+#!/bin/sh
+# restart,v 2.5 1993/12/16 18:46:37 dmoore Exp
+
+GAMEDIR=$HOME/tmuck2.3/minimal-db
+PORT=2180
+NAME=minimal-db
+MAILTO=dmoore
+
+PATH=$PATH:$GAMEDIR
+
+# On smart systems this will give it a directory to save gmon.out files
+# for later perusal (if you compiled with -pg).
+PROFDIR=$GAMEDIR/prof
+export PROFDIR
+
+
+# Routine to die and remove lock file.
+die() {
+    echo $*
+    rm restart.lock
+    exit 1
+}
+
+# Routine to check that the last line of the db seems fine and if so
+# sanity check it.
+check_db() {
+    if [ -r $1 ] && [ "`tail -1 $1`" = "***END OF DUMP***" ]; then
+        echo "Sanity checking: $1"
+	echo "Output will also be saved in the file $GAMEDIR/saneout."
+        status=`(((sanity < $1 2>&1); echo $? 1>&3) | (tee $GAMEDIR/saneout > /dev/tty 3>&-)) 3>&1`
+        return $status
+    else
+        return 1
+    fi
+}
+
+
+# Go to the right directory.
+cd $GAMEDIR
+
+# Check for someone already starting the muck, and exit if they have.
+if [ -f restart.lock ]; then
+    echo "Restart already in progress."
+    exit 1
+fi
+
+# Lock file to prevent multiple starts.
+touch restart.lock
+
+# Make sure that a muck with this port # isn't already running
+if [ `ps uww | egrep netmuck | egrep $PORT | wc -l` -gt 1 ]; then
+    die "Not restarting, process already exists."
+fi
+
+# Try to find a valid database.  First try the PANIC, then fall back
+# to the in.$NAME.new file.  If we can't find one, then die.
+if check_db data/in.$NAME.new.PANIC; then
+    mv data/in.$NAME.new.PANIC data/in.$NAME.new
+    echo "Moving in.$NAME.new.PANIC to in.$NAME.new"
+else
+    # Either no panic dump, or it's corrupted.
+    if [ -r data/in.$NAME.new.PANIC ]; then
+        echo "Warning: PANIC dump failed on "`date` | mail $MAILTO
+        echo "Warning: PANIC dump failed trying other means to start."
+    fi
+    if check_db data/in.$NAME.new; then : ;
+    else
+        # None of the dumps are ok, bail.
+        die "Fatal: in.$NAME.new incomplete or corrupted."
+    fi
+fi
+
+# If it makes it this far then we definitely have a valid db: in.$NAME.new
+# So save the old db, if there was one, and then start it up.
+echo "Moving in.$NAME in.$NAME.old"
+mv -f data/in.$NAME data/in.$NAME.old
+echo "Copying in.$NAME.new to in.$NAME"
+cp data/in.$NAME.new data/in.$NAME
+
+
+# Start up the muck
+mv -f newnetmuck netmuck
+date >> logs/stderr
+ 
+./netmuck data/in.$NAME data/in.$NAME.new $PORT 2>> logs/stderr &
+echo "Muck pid: $!"
+
+# Remove the lock after the db has a chance to load.
+(sleep 10; rm restart.lock) &
+

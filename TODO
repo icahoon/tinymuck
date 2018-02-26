@@ -1,0 +1,258 @@
+x. Fix builder flag setting so only wizards can do if no RESTRICTED_BUILDING.
+x. Fix toading players to change macro ownership.
+3. Pennies #defines.  (#52)
+x. Fix headers for port number and other strange defines.
+x. Set rwho to use the comment from the version #, not a seperate string.
+x. Fix @dig parenting.
+7. Add @q to quit mud editor or fix documentation.
+x. Choose timeout for select more intelligently.
+x. Fix check_prop_perms in db_prims.c to check for ':' in prop name.
+xx. Fix restart script to be esaier to modify, remove 'return 0'.
+xx. Default set of flags for new players
+12. Start collecting up ''interesting'' additions from other people
+    which might go into an unsupported examples directory tree.  Perhaps
+    humor suggestions on certain currently unsupported things which might
+    actually be useful.
+xx. Stick stuff for TM_STRUCT_HAS_ZONE in config.h.
+xx. Include example lockout.sites file.
+15. Get basic admin documention finished.
+16. Rewrite the sanity checker.
+xx. Have the lockout file accept * in the dbref field.
+18. Fix strftime docs to work like function (%x, maybe others).
+xx. Change string routines to take char * and then internally change to
+    use unsigned char *.
+xx. There is a call to unparse_object in interface.c if !HOSTNAMES.  Fix this.
+21. Edit db.h to let people to know to use Wizard(p) not HasFlag(p, WIZARD).
+22. More security checking for the sanity checker.  Perhaps look for say/pose
+    actions on objects which are in rooms/players other than their owner.
+    Check for unlinked exits in #0, check for unlinked dark exits anywhere.
+    Check for exits in #0 not owned by wizards.
+    Any other ideas???  (email me)
+23. Check that terminal detaching works (losing controlling tty).  rc/es
+    problem?  Appears to be rc problem, maybe call setsid anyways?
+24. Fix up flags.h and do up a mkflags.sh for easier addition/subtraction
+    of flags?
+25. Get the sanity checker to do something with macros.  Perhaps macros
+    should be inside of the database anyways.  It's a pain being in two
+    files.
+26. Add the scripts that tt used to call from cron to make backups and
+    to mail wizards appropriate files.  (Was this script lost?  If so
+    it should be rewritten.)
+27. Think about having the string interning do splits on -/ and other
+    common seperators.  This could save a fair amount of memory, depending.
+    I thought about this before and then didn't do it for some reason.
+    New:  I thought about it a tiny bit, unlikely to save much memory at
+    all, since prop names aren't where we waste memory??
+    New2: actually we can waste memory in prop names if you have
+    centralized db's like mail.  Splitting on -/ might pay off pretty well
+    on those db's.  I don't know how many like that are still around, tt
+    would have saved memory tho.
+28. Document global variables and where they live.
+29. Pull the various strings for the interface code into a common header for
+    ease of change.  (currently they are split over interface.c and config.h).
+xx. Allow homing of objects to people.
+31. examine to show description
+xx. MFLAGS doesn't work under newer gnu makes
+xx. ^C during generation of config.h causes problems.
+xx. global @stat for non-wizards.
+xx. Check whispering to nonplayer objects.
+36. Check @tel to match whole object names before partial players or
+    whatever the heck it's doing.  Probably a problem in match.c.
+37. Add runtime config file.
+38. Muf manual entries for 'put' and fix 'rotate' to mention negative args.
+xx. Make GOD into a variable head_player read in from the dumped db header 
+    like player_start and global_environment.  Have sanity issue a warning
+    if head_player isn't a wizard.
+40. Clean up string compression code and maybe dump the bigraphs into
+    the db header.  Can gain extra bigraphs by using unused spots in 
+    isprint (like control characters).  Putting bigraphs in db header
+    makes decompress need that information, which is a bit of a lose.
+xx. Better support for god bits.  (#39)
+xx. Stick code & frames into seperate tables managed by the interp code
+    rather than keeping them on program and player objects.  Have the
+    frame code have entries for an interactive program and a list
+    of background programs for the player.  Have interp_quit_external
+    just kill the interactive one.
+43. Redo the db layer again to make it use less space and still be
+    growth efficient.  Use a two tiered approach.  This takes no more
+    accesses than current method, but will save mucho space.  In optimal
+    best case the idea of using seperate types for a garbage object than
+    a normal object can only win if (#Garbage * 10) > #NonGarbage.  This
+    is very unlikely and also assumes you have an optimally smart malloc.
+44. Write a tune program which the makefile compiles and runs to create
+    a tune.h header file.  Use this to optimize allocation hunk sizes
+    for various hunking routines.
+xx. Have sanity checker issue fatal warnings if player_start and
+    global_environment aren't rooms.  Also have it display the current
+    values for these (and head_player) when in security mode.
+xx. Put in code to dump hashtable statistics at a certain time interval.
+47. Have code to do walks through property lists killing off junked
+    properties whenever there is free time.  Have a junk_prop counter
+    which keeps the # of currently junked properties on each object.  This
+    way you can tell when you're done.  Maybe walk down 1 object everytime
+    there is X seconds with no activity.  Note that inline dumps do
+    this compaction on the whole db at dump time.
+48. Add more usage warnings to the sanity checker.  This should probably
+    get an option instead of being default like now.  Check for # of
+    objects in contents lists, # of actions on an object.  Check for
+    duplicate exit names on rooms and objects.  Check total number of
+    properties and string bytes for a player.  Maybe some sort of
+    exit ratio test.  Check for undesced/unsucc things, etc.
+49. Have the sanity checker remove exteneous files in the muf directory.
+xx. Stick the prop_list structure directly on the general_object
+    structure.  The current method of having it as a seperate object
+    was designed to save memory for objects with no properties.  But
+    this can only save memory if (#NoProp * 3) > #Prop.
+    And if a junked counter goes in this structure then it's down
+    to (#NoProp * 4) > #Prop, which isn't going to happen in a real db.
+51. Stick back in the server versions of map-list and sort-list.
+    Think about a sort-keyed-list.  Think about having sort-keyed-list
+    cheat for doing an integer sort (do them all in one pass w/ radix)
+    and semi cheat for string sort doing maybe X swaps on each drop in
+    instead of just 1.
+52. Quota system hooks instead of pennies.  Provide an emulation of
+    pennies in the system, and also provide a simple object # version
+    which uses a db object referenced off of global_environment for
+    the normal max count and extra deltas for specific players.  (#3)
+53. If there was a quota system, does it make sense for the sanity
+    checker to make sure that no one is over their quota?  That probably
+    wouldn't work in the case that the quota system called to a muf
+    program.
+53. Timestamps.  How do the other servers decide on what exactly
+    constitutes an access, a write, or a use.  Check fuzzball, daemon,
+    and dragonmud.
+54. Make server page do echo?
+55. Standard macro library, obviously.
+56. Server versions of toupper/tolower.  Other backings of certain
+    standard library functions?
+57. Call a compression program to handle dumped db's.  On forked dumps
+    just call it.  On inline dumps use vfork, except that vfork is broken
+    on the same machines fork is broken.  If you do inline dumps, no
+    compression?
+58. Recompress property names in dump again?  Problem is that compressed
+    strings aren't directly comparable wrt case insensitivity.  So this
+    only saves a little space in the disk image.
+xx. Check if program names still have that stupid default scroll description
+    set on them, and remove it if so.
+60. Add a typecheck primitive, this lets you write a compiler which
+    does compile time type checking be able to call and be called
+    by other programs.
+61. Change the current type checking to first use a lookup table
+    which gets indexed by the type of the top two stack types and
+    the bytecode.  (Note will want to have two dummy entries off
+    the bottom of the stack.)  Should improve speed.
+xx. Run programs on #0 and player on connect/disconnect?
+63. Read over the boolexp code carefully.  There might be a bug in it.
+    Also recheck the new recycle code again.
+64. All of match.c should be rewritten.  It's still a mess, and a lot
+    of time is spent in the exit matching code.  The exit matching
+    code does some pretty inefficient things, too.  Checks locks
+    multiple times, bad bad.
+65. Have the compiler/interpreter use an actual bytecode as opposed
+    to the current stream of 8 byte structures.  Even a trivial splitting
+    of the struct inst's in the func_addr structures into 2 arrays
+    one of the type and the other of the data would save a bit.  The type
+    would fit in 1 byte, so this would save 3/8 of the code space.  Of
+    course an actual bytecode method would save more (but unclear how
+    much more).
+66. Use some sort of last used timestamp on programs.  And periodically
+    throw out the bytecode to programs not recently used.  This will
+    force them to recompile if used later, but maybe free up some
+    memory.
+67. Use a similar (65.) splitting of the type from the data for
+    the address and datastacks of the frame.  This will reduce size
+    of frames from just over 8k to just over 5k.
+68. Maybe have the makefile determine if tolower or toupper are broken
+    on this machine, and in that case provide our own version?
+69. Own version of strncasecmp (not everywhere, not ansi). 
+70. Would splitting on spaces in interned strings save space?  Have
+    one type of interned string be an array of words, you'd pass over
+    the string once counting spaces, then allocate the array, then
+    pass over it again filling in the consituent parts.  Each item in that
+    array is an interned item.  This would essentially be giving a word
+    compression on the database.  It'd only save space if there were
+    a lot of common words (true) and if the average length of these
+    words was greater than the 4+ bytes needed to hold this extra pointer
+    (probably not true).  This also makes the procedure for getting the
+    text of an interned string harder, but any sort of splitting scheme
+    has that drawback.  You could perhaps make a decision about the
+    cost incurred for strings which don't have lots of the longer common
+    words in them and just store them unexpanded (not sure how to do this).
+71. For wizard docs besure to mention useful things like that if you are
+    getting rid of a lot of people, that it's smarter to toad them all to
+    a special player whose only purpose is to temporarily hold their
+    objects, then @purge that special player.
+72. Wiz-only primitive to get next property.  A primitive to get the
+    next object owned by someone.  (nextown, ownnext, ??)
+73. Have sanity checks inside the main program, as opposed to just in the
+    seperate sanity checker.  Majority of time spent in 'sanity' is 
+    load time.  This is a waste, and encourages people to not sanity check
+    their db's.  Have the fatal error sanity checking in the main program,
+    perhaps with an option to do the various warning checking then as
+    well.  Also provide a smaller standalone version (like the old one)
+    which also does this.  The repair operations could either go in both
+    or just the smaller standalone checker.
+74. Port concentrator, set up to allow the concentrators to run on other
+    hosts.  This is useful for forwarding, as well as concentrating.
+xx. Make sure that text of programs is removed when you get a new program
+    via @prog, in case the old one didn't get erased.
+xx. Change from using wait3 to just waitpid.
+xx. How about #ifdef HAVE_UNISTD_H, and let people set it in config.h.
+xx. For systems with unistd.h, maybe use sconf to get OPEN_MAX, instead
+    of using getdtablesize.
+79. Credits file.
+80. Have a way of substituting runtime variables into the help/man/etc
+    documentation when it is displayed.  This is particularly useful/easy
+    to do if a runtime config method shows up.
+81. Make it so that ansify.h doesn't need to be editted.  Have
+    entries in config.h called 'BROKEN_TOLOWER' or similar.  Perhaps
+    rename ansify.h then. 
+xx. Rewrite the laston script to be far more intelligent.  Have it
+    get dbrefs & names from the db (indexed by dbref in an awk array)
+    also be sure to count up the number of objects owned by dbref.
+    Then go through the status log keeping track of the latest
+    connect time (both as integer and string) for each dbref.  Spit
+    all of this output out sorted by connect time.  This way you can
+    easily see who the old players are and also how much they owned.
+83. Think about putting the normal docs into mud/docs/* instead of
+    mud/data/*.  That makes it easier to share among multiple
+    servers on same machine or such, could just be a link to the
+    docs directory for the source.  Also, should think about
+    renaming forth.ref to man.txt or something.
+84. Check out the h_errno stuff for gethostbyaddr and see how portable
+    it is.
+85. db muf predicates work on !ok? things
+86. need to make bufsprint understand widths for integers and strings
+87. fix editor to print line numbers correctly again.
+88. fix locks so you can call 'match' w/o nuking args
+89. @attach by number, check all @commands for more uniform and
+    liberal matching.
+90. Extract and merge programs.
+91. Fix lockout.c to include the needed files for netinet/in.h.
+92. Store the uptime somewhere.
+xx. Possibly allow tzset(), tzname[] to get timezone info.
+93. Write a type checker optimizer for muf which makes use of the
+    already existing ability to mark a word as compile time
+    type checked.  This could drastically help, since a lot of interp
+    time is spent type checking.  Of course, only helps if a reasonable
+    portion of words are able to be compile time checked.
+94. Pull out the WHO stuff (and maybe OUTPUT*) from interface.c.  With
+    the con* routines you can do this in other ways.  For efficiency
+    there should probably be an array indexed by fd# to the descriptor
+    struct.
+95. "help commandname" doesn't work if the commandname is in the file
+    as "name1,name2" where name2 is the name you're using, and you
+    didn't put a space in the file before it.
+96. Do block diagrams of data structures and show what the fields are
+    and the connections.  For example the struct code pieces and hash
+    table they are indexed from, and when they are unconnected, etc.
+97. Restart script doesn't like it when there is no db.new file.
+98. Object creation primitives.  Do you have a 'set_type' command?  Or
+    a creation command?  What about getnlink, setnlink?  What other
+    creation like primitives are missing?  recycle from muf?
+xx. Have @force notify the victim of who forced them and what they were
+    forced to do.
+xxx. Notify both local and remote rooms when a remote kill is performed.
+
+
+TODO,v 2.38 1997/07/03 00:15:44 dmoore Exp

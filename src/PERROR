@@ -1,0 +1,14 @@
+Sat Mar 19 22:19: LOADING: data/in.temp (done) --[764144385]
+Sat Mar 19 22:19: ACCEPT: OJ's.machine(34747) on fd 1. --[764144386]
+Sat Mar 19 22:19: CONNECTED: Students(#1PWM) from OJ's.machine on fd 1. --[764144386]
+Sat Mar 19 23:41: CHECKPOINTING(fork): data/in.temp.new.#1# --[764149273]
+Sat Mar 19 23:41: CHECKPOINTING(fork): data/in.temp.new.#1# (done) --[764149276]
+Sun Mar 20 01:23: CHECKPOINTING(fork): data/in.temp.new.#2# --[764155417]
+Sun Mar 20 01:23: CHECKPOINTING(fork): data/in.temp.new.#2# (done) --[764155420]
+Sun Mar 20 00:00: PERROR: main_loop: select -- Invalid argument --[764150409]
+Sun Mar 20 00:00: DUMPING: data/in.temp.new.#3# --[764150409]
+Sun Mar 20 00:00: DUMPING: data/in.temp.new.#3# (done) --[764150411]
+
+Voodoo says, "Mon Sep 23 12:06: PERROR: main_loop: new_connection -- Protocol 
+    error --[843505608]"
+

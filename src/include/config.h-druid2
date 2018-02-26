@@ -1,0 +1,9 @@
+#ifndef MUCK_CONFIG_H_DRUID2
+#define MUCK_CONFIG_H_DRUID2
+
+#define DEBUG_EVERYTHING
+#define FIX_FIX_FIX_DEBUG_MALLOCS
+
+#include "config.h-druid"
+
+#endif /* MUCK_CONFIG_H_DRUID2 */

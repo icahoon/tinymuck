@@ -1,0 +1,150 @@
+Changes in TinyMUCK v1.1:
+
+- Some of the bugfixes and modifications done by Scott C. Goehring
+  ("Firefoot") have been added:
+  o the 'has connected' and 'has disconnected' messages are optionally
+    installed (-DCONNECT_MESSAGES in the Makefile)
+  o the !-bug and pronoun-substitution bug have been fixed
+  o the WHO list is tabular, but not reversed (ie., most recently
+    connected players are at the top).  This is hard-coded; there
+    are no additional player flags.
+- a big bug in do_attach has been fixed, it now checks for ownership
+  of the exit.
+- the Typeof(thing) macro now checks for HOME and returns TYPE_ROOM, as it
+  should, so @link exit=home should work properly on all platforms.
+
+Changes in TinyMUCK v1.2
+
+- New database format --- compatibility modes allowed, though.
+- Property lists added.
+- drop, odrop fields added.
+- page now can include a message.
+- locks can now be against properties too.
+- Gender pronoun substitution code uses player's p-list instead.
+
+Changes in TinyMUCK v1.2F (Incorporates Fire Foot's changes)
+
+- ABODE && HAVEN flags optional
+- God cannot be forced, have password changed, or unwizarded.
+- Database read routines changed so that FireFoot's ABODE and HAVEN
+  flags are either ignored or shifted to the new position.
+
+- Sanity checker is back!
+  Usage is:
+	sanity <infile >report file
+
+  The report file will tell you what the problem is as well as giving
+  you the listing.
+
+- Examine now does a "look" and also tells you who owns this object.
+
+Changes in TinyMUCK 2.0
+
+- @prog -- see "forth.ref" and "technical.doc"
+- MUCKER bit must be set to use the above.
+- sanity has been updated to just ignore programs when checking.
+  It should eventually be updated to check program owners and such.
+- m/ directory has been added to distribution --- this directory is
+  used to contain MUF programs.  Hence, restart also "backs up"
+  that directory by moving it to m.old before starting.
+  This directory may contain junk.
+- Changes in look, examine to reflect program changes.
+- Change to trigger to reflect it.
+- Change to game.c to test for interactiveness and act accordingly.
+- Rest of changes concentrated in edit.c, compile.c, interp.c, inst.h
+- wiz.c changed to update @stat command.
+- do_get had to be added.
+- concentrator "added"  Note that conc.c has been slightly changed
+  from the original to run on nyquist.
+  Same thing applies to interface3.c (it differs from Robert's
+  original distributions)  Especially note that writelog has become
+  #defined to printf.  (I don't know where it was originally.)
+- #ifdefs for MIPS (Dec3100) stations.
+- TRUENAMES modifications no longer show names when you look at a
+  linkable player.
+
+Changes in TinyMUCK 2.0.1
+
+- Countless changes, see RCS log for info.
+- This is primarily a bug fix release, though it also does several
+  design changes that should be hidden.
+
+Changes in TinyMUCK 2.1
+
+- New commands: @boot, @edit, @list, @recycle (with -DRECYCLE), @pcreate
+  (with -DREGISTRATION)
+- We now have true recycling of objects, courtesy of jmattson@ucsd.edu,
+  adding a new type, TYPE_GARBAGE, which is considered first
+  before @create makes a new object.
+- Extended WHO list for Wizards.  Shows players' numbers, flags, times,
+  IP address, and game location.
+- Exits may be set DARK by Wizards, to suppress the standard `has arrived.'
+  and `has left.' messages.  This should cut down on noise in areas with
+  osucc'ed exits.
+- interp.c got a major makeover, thanks to jmattson@ucsd.edu and
+  russ@uokmax.ecn.uoknor.edu.  Many #ifdefs replaced with a single #def.
+  Thanks much.
+- Changes in MUF:
+- Command line arguments from russ@uokmax.ecn.uoknor.edu.  Many changes
+  for the exit/action matching algorithm, enabling replacement of system
+  commands as well.
+- TRIGGER variable.
+- RMATCH primitive.
+- OWNER primitive.
+- Six flag-reading primitives, JUMPP, CHOWNP, LINKP, DARKP, TEMPLEP, and
+  STICKYP.  See MUF.manual (formerly forth.ref) for complete details.
+
+In the version of MUF used by Muck 2.1, two MUF program words were changed
+which will make many old MUF programs incompatible.  While this is somewhat
+inconvenient, the changes save a lot of code space and CPU time, and also
+make the language easier to understand since there is less swapping.
+We felt that it would be better to make this change now, while there aren't
+too many MUF programs out there, than to live with MUF being much less
+efficient than it easily could be.
+
+Those changes were:
+
+The order of arguments to the "!" word have been reversed.
+The order of arguments to "explode" have been reversed.
+
+The MUF documentation has been updated to reflect the changes.
+
+Changes in TinyMUCK 2.2
+
+- New command: @trace.
+- New feature: environments.  Allows global commands and allows builders
+  to create their own theme areas.
+- Bugs fixed: @boot, a few memory leaks, problems with the COMPRESS
+  option, many more...
+- Property list strings are now compressed with the COMPRESS option.
+- Player name and primitive hash tables added for speed.
+- Wizard WHO list has been changed again.  Options are numeric IP
+  addresses and all player flags displayed, or hostnames minus player flags.
+- Improved logging: logfiles are created in a separate directory and commands
+  are kept separate from important system messages.
+- Concentrator version 2.0 added.
+- Another makeover for interp.c, including many speed enhancements.
+  Thanks once again to jmattson@ucsd.edu.
+- Changes in MUF:
+- Programs can be triggered via the text fields of objects: the desc, succ,
+  fail, and drop may run programs rather than display text to the user.
+- Macros may be added by MUCKERs to a global pool usable by all
+  programmers.  See edit help; while in the editor type 'h'.
+- COPYOBJ bug fixed; COPYOBJ now deletes the pointer to actions the new
+  object inherits from the old.
+- Changed primitives: RMATCH handles players and objects correctly, in
+  addition to matching appropriate exits/actions.  The six flag primitives
+  from 2.1.1, JUMPP, CHOWNP, LINKP, DARKP, TEMPLEP, and STICKYP have
+  been replaced by one FLAG? primitive.  FLAG? is able to read any flag
+  the MUCK site has been set up with.  All other P primitives, for
+  example ROOMP, PLAYERP, have been changed to question marks:
+  ROOM?, PLAYER?.  CONTENTS no longer returns a list of things but
+  the dbref of the first thing in the object's contents.  This list
+  is then traversed by NEXT.
+- New primitives: ELSE, OVER, PICK, PUT, ROT, ROTATE, GETLINK, PRONOUN_SUB,
+  STRNCMP, STRCUT, STRLEN, INSTR, RINSTR, OK?, TIME, EXECUTE, EXITS,
+  NEXT.
+
+MUF primitives are described in detail in the MUF programmer's reference,
+MUF.manual.  The quick reference should be available on-site as helpfile
+forth.ref.

@@ -1,0 +1,105 @@
+/* Copyright (c) 1994 by David Moore.  All rights reserved. */
+/* disk_db.c.new,v 2.1 1996/09/25 00:08:27 dmoore Exp */
+#include "config.h"
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#include "db.h"
+#include "params.h"
+#include "buffer.h"
+#include "externs.h"
+
+/* in *.h file */
+typedef struct vmem_ptr {
+    unsigned int junk:1;
+    unsigned int offset:31;
+} vmem_ptr;
+
+struct vmem_data {
+    vmem_data *next;
+    vmem_data **prev;
+    vmem_ptr what;
+    size_t disk_offset;
+    size_t len;
+    void *data;
+};
+
+union vmem_info {
+    size_t disk_offset;
+    struct vmem_data *info;
+};
+
+extern unsigned char *vmem_flags;
+extern union vmem_info *vmem_info;
+
+#define VMEM_TEMPORARY	0x0	/* no expected locality -- @find, ex, etc */
+#define VMEM_NORMAL	0x1	/* normal handling */
+#define VMEM_PRIORITY	0x2	/* give cache priority -- object structs */
+#define VMEM_LOCKED	0x4	/* locked in memory */
+#define VMEM_TEMP_MASK	0x4	/* for checking TEMPORARY status */
+
+#define VMEM_STRING	0x8
+#define VMEM_NULL	0x10	/* special case optimization */
+#define VMEM_DIRTY	0x20
+#define VMEM_LOADED	0x40
+#define VMEM_TOUCHED	0x80
+
+/* f should be TEMPORARY, NORMAL, PRIORITY or LOCKED */
+#define Fetch(x, f) \
+    ((vmem_flags[x.offset] & VMEM_LOADED) ? \
+     (vmem_flags[x.offset] |= (VMEM_TOUCHED | (f)), \
+      vmem_info[x.offset].info->data) : \
+     vmem_fetch(x, f))
+
+#define UnLock(x) \
+    do { vmem_flags[x.offset] &= ~VMEM_LOCKED; } while (0)
+
+#define MarkDirty(x) \
+    do { vmem_flags[x.offset] |= VMEM_DIRTY; } while (0)
+
+#define VMALLOC(r, t, c, f) \
+    ((r) = (t *) vmem_malloc(sizeof(t)*(c), f))
+
+#define VFREE(r) vmem_free(r)
+
+/* end *.h file */
+
+unsigned char *vmem_flags = NULL;
+union vmem_info *vmem_info = NULL;
+
+static FILE *database;
+static size_t cache_avail;
+
+void *vmem_fetch(vmem_ptr what, unsigned char flags)
+{
+    vmem_data *data;
+
+    if (vmem_flags[what.offset] & VMEM_NULL)
+	return NULL;
+
+    MALLOC(data, sizeof(vmem_data), 1);
+    data->next = NULL;
+    data->prev = NULL;
+    data->what = what;
+    data->disk_offset = vmem_info[x.offset].disk_offset;
+
+    fseek(database, data->disk_offset, SEEK_SET);
+    fread(&data->len, sizeof(size_t), 1, database);
+
+    if (cache_avail < data->len) {
+	vmem_flush(data->len);
+    }
+
+    MALLOC(data->data, data->len, 1);
+    fread(data->data, data->len, 1, database);
+
+    vmem_flags[what.offset] |= (VMEM_TOUCHED | VMEM_LOADED | flags);
+    vmem_info[what.offset].data = data;
+
+    return data->data;
+}
+
+
+

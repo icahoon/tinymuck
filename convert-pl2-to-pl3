@@ -1,0 +1,42 @@
+#!/bin/sh
+# convert-pl2-to-pl3,v 2.3 1994/05/17 00:31:24 dmoore Exp
+
+if [ $# -ne 1 -o ! -f "$1" ]; then
+    echo "usage: convert-pl2-to-pl3 <database>"
+    exit 1
+fi
+
+
+if [ "`head -1 $1`" != '***Firiss TinyMUCK 2.3 DUMP Format***' ]; then
+    echo "This does not appear to be a TinyMUCK 2.3 pl2 database."
+    echo "If it doesn't load, try the convert program."
+    exit 1
+fi
+
+echo Backing up database in $1.bak.
+
+mv $1 $1.bak
+if [ $? -ne 0 ]; then
+    echo Unable to back up database.  Quitting.
+    exit 1
+fi
+
+
+# First remap the header string.
+# Then remap the locks by swapping them with the blank line
+# which denotes end of properties and sticking the 'Key:i&:'
+# which is needed in front.
+
+sed \
+    -e '1,1s/^\(...Firiss TinyMUCK 2.3 DUMP Format\)\(...\)$/\1 v1\2/' \
+    -e '/^$/N' \
+    -e 's/^\(\n\)\(.*\)$/Key:i\&:\2\1/' \
+    < $1.bak > $1
+
+
+cat <<'EOF'
+Your database has been converted to the new format.  You should
+run the new sanity checker on it, and see if the output seems
+right.  The number of properties in your database will increase
+by the number of locks that you had.
+EOF

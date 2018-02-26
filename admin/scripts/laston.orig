@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Goes through a status log and generates the last login time for a
+# player.
+# Should sortof work with old pre2.3 status logs, since it sets a dummy
+# time of 0 for those.  However, sort isn't stable so they might get
+# thrown out of order.  Oh well.  Not much can be done about that.
+
+# laston.orig,v 2.1 1994/02/20 06:51:15 dmoore Exp
+
+egrep ': CONNECTED:|: CREATED:' $* |\
+sed -e 's/^\(.*\)[^]]$/\1 --[0]/' \
+    -e 's/^\([^:]*:[^:]*\):[^:]*: \([^ ]*\) .* --\[\([0-9]*\)\]$/\1 \3 \2/' \
+    -e 's/^\(.*\) \([0-9]*\) \([^ ]*\)(#\{0,1\}\([0-9]*\)[^(]*)$/\4 \2 \1 \3/' |\
+sort -n +0 -1 +1 -2 |\
+awk '
+BEGIN		{ who = ""; info = ""; }
+$1 != who	{ print info; }
+		{ who = $1; info = $0; }
+END		{ print info; }
+'
+

@@ -1,0 +1,82 @@
+; <name>	<function>		[exact]
+
+@version	do_version
+@entrances	do_entrances
+@action		do_action
+@attach		do_attach
+@chown		do_chown
+@create		do_create
+@describe	do_describe
+@dig		do_dig
+@drop		do_drop_message
+@edit		do_edit
+@fail		do_fail
+@find		do_find
+@force		do_force
+@link		do_link
+@list		do_list
+@lock		do_lock
+@name		do_name
+@odrop		do_odrop
+@ofail		do_ofail
+@open		do_open
+@osuccess	do_osuccess
+@owned		do_owned
+@password	do_password
+@prog		do_prog
+@recycle	do_recycle
+@set		do_set
+@stats		do_stats
+@success	do_success
+@teleport	do_teleport
+@trace		do_trace
+@unlink		do_unlink
+@unlock		do_unlock
+
+; Wizard only commands.
+@purge		do_purge		exact
+@boot		do_boot			exact
+@dump		do_dump			exact
+@newpassword	do_newpassword		exact
+@pcreate	do_pcreate
+@shutdown	do_shutdown		exact
+@toad		do_toad			exact
+@wall		do_wall			exact
+
+; Various help commands.
+help		do_help
+man		do_man			exact
+news		do_news			exact
+
+; Looking.
+look		do_look
+read		do_look
+examine		do_examine
+
+; Movement.
+goto		do_move
+move		do_move
+
+; Getting and droppping things.
+get		do_get
+take		do_get
+drop		do_drop
+put		do_drop
+throw		do_drop
+
+; Various speaking routines. " and : map into say and pose.
+say		do_say
+pose		do_pose
+page		do_page
+whisper		do_whisper
+
+; Assorted other things
+give		do_give
+gripe		do_gripe
+kill		do_kill
+rob		do_rob
+score		do_score
+inventory	do_inventory
+; @extract	do_extract
+
+

@@ -1,0 +1,15 @@
+; editor commands, pretty straight forward, I think...
+; Note: def is handled seperately inside the code, since it's a special case.
+insert		edit_insert
+delete		edit_delete
+quit		edit_quit
+compile		edit_compile
+list		edit_list
+help		edit_help
+kill		edit_kill_macro
+show		edit_show_macros
+abbrev		edit_show_abbrev
+view		edit_view
+unassemble	edit_unassemble
+numbers		edit_linenos
+toggle		edit_linenos

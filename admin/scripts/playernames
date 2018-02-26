@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# print out a list of all of the player dbrefs in a muck db.
+
+# playernames,v 2.4 1993/10/28 08:32:07 dmoore Exp
+
+if [ $# -ne 1 ]; then
+    echo "usage: $0 database"
+    exit 1
+fi
+
+exec < $1
+sed -n -e 's/^PLAYER[^:]*$/PLAYER/' -e '/^PLAYER$/N' -e '/^PLAYER\n/p' | \
+sed -e '/^PLAYER/d'
+

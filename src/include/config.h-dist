@@ -1,0 +1,230 @@
+/* config.h-dist,v 2.7 1997/08/29 21:00:13 dmoore Exp */
+#ifndef MUCK_CONFIG_H
+#define MUCK_CONFIG_H
+
+/* This section contains settings for machine dependent issues. */
+
+/* If you have /usr/include/unistd.h turn this on. */
+#define HAVE_UNISTD_H
+
+
+/* If you don't have waitpid, turn this on to use wait3 instead. */
+/* #define HAVE_WAIT3 */
+
+
+/* If you have difftime, turn this on. */
+/* #define HAVE_DIFFTIME */
+
+
+/* If you have random, turn this on. */
+#define HAVE_RANDOM
+
+
+/* If you have strerror, turn this on. */
+#define HAVE_STRERROR
+
+
+/* What type are your signal handlers expected to return? */
+#define RETSIGTYPE void
+
+
+/* If you have tzset function. */
+#define HAVE_TZSET
+
+
+/* If your struct tm doesn't have a tm_zone, and you do have tzname. */
+/* #define HAVE_TZNAME */
+
+
+/* If no tm_zone and no tzname, then set this as needed. */
+/* #define NEED_TIME_ZONE 	{ "PST", "PDT" } */
+
+
+/* If your tolower is broken, turn this on. */
+/* #define BROKEN_TOLOWER */
+
+
+/* If you have unix time namely that time_t goes up once per second
+   starting from Jan 1, 1970 then turn this on.  Most time's work this
+   way.  It doesn't hurt to turn this off, it's just less efficient if
+   you do have unix time. */
+#define UNIX_TIME
+
+/* If you are on a machine with 4 byte alignment, you could lower this
+   to 4 to save some space for debugging malloc.  If your machine has
+   alignment greater than 8 bytes, change this. */
+#define ALIGN_BYTES	8
+
+
+
+/* This section contains generic game play settings. */
+
+/* Turn on to use hostnames instead of ip_addresses in logs and WHO. */
+#define HOSTNAMES
+
+
+/* To support GOD flags. */
+/* #define GOD_FLAGS */
+
+
+/* Allow only Gods to use @pcreate, otherwise all wizards can. */
+/* #define GOD_PCREATE */
+
+
+/* Lets you specify default flags on objects when they are created. */
+/* Example: #define DEFAULT_ROOM_FLAGS (JUMP_OK|HAVEN) */
+/* Example: #define DEFAULT_PLAYER_FLAGS (MUCKER) */
+#ifndef DEFAULT_ROOM_FLAGS
+#define DEFAULT_ROOM_FLAGS	(NOFLAGS)
+#endif
+
+#ifndef DEFAULT_THING_FLAGS
+#define DEFAULT_THING_FLAGS	(NOFLAGS)
+#endif
+
+#ifndef DEFAULT_EXIT_FLAGS
+#define DEFAULT_EXIT_FLAGS	(NOFLAGS)
+#endif
+
+#ifndef DEFAULT_PLAYER_FLAGS
+#define DEFAULT_PLAYER_FLAGS	(NOFLAGS)
+#endif
+
+#ifndef DEFAULT_PROGRAM_FLAGS
+#define DEFAULT_PROGRAM_FLAGS	(NOFLAGS)
+#endif
+
+
+/* Restrict building to users with BUILDER bit. */
+/* #define RESTRICTED_BUILDING */
+
+
+/* Allow everyone to be a MUCKER.  Better to use DEFAULT_PLAYER_FLAGS. */
+/* MUCKER_ALL might be leaving in next release. */
+/* #define MUCKER_ALL */
+
+
+/* Lets examine show integer properties on objects. */
+/* #define SHOWINTPROP */
+
+
+/* Allow a player to use teleport-to-player destinations for exits. */
+#define TELEPORT_TO_PLAYER
+
+
+/* Run programs set in _connect/_disconnect properties on global
+   environment and player on connection and disconnection. */
+#define MUF_CONNECT_HOOKS
+
+
+/* Limit on player name length. */
+#ifndef PLAYER_NAME_LIMIT
+#define PLAYER_NAME_LIMIT 16
+#endif
+
+
+
+/* Various internal server settings. */
+
+/* Use to compress string data. */
+#define COMPRESS
+
+
+/* To enable logging of all commands. */
+/* #define LOG_COMMANDS */
+
+
+/* Log failed commands ( HUH'S ) to status log. */
+/* #define LOG_FAILED_COMMANDS */
+
+
+/* Log all unquelled wizards. */
+/* #define LOG_WIZARD_COMMANDS */
+
+
+/* To enable logging of all players named 'Storm'. */
+/* #define LOG_STORM_COMMANDS */
+
+
+/* Turn this back on when you want MUD to set from root to some user_id */
+/* #define MUD_ID "MUCK" */
+
+
+/* Port that tinymuck uses for playing */
+#ifndef TINYPORT
+#define TINYPORT "4201"
+#endif
+
+
+
+/* Dump settings. */
+
+/* To use inline dumps rather than forking and dumping in parallel. */
+/* #define INLINE_DUMP */
+
+
+/* To have inline dumps send a message to all players. */
+/* #define LOUD_DUMP */
+
+
+/* Number of seconds between database dumps. */
+#ifndef DUMP_INTERVAL
+#define DUMP_INTERVAL (60*60)
+#endif
+
+
+/* RWHO support */
+
+/* Try to connect to the rwho server. */
+/* #define RWHOD */
+
+/* The various settings for rwho. */
+#ifndef RWHO_SERVER
+#define RWHO_SERVER "littlewood.math.okstate.edu"
+#endif
+
+#ifndef RWHO_NAME
+#define RWHO_NAME "BozoMUCK"
+#endif
+
+#ifndef RWHO_PASS
+#define RWHO_PASS "password"
+#endif
+
+#ifndef RWHO_PORT
+#define RWHO_PORT 6889
+#endif
+
+#ifndef RWHO_INTERVAL
+#define RWHO_INTERVAL 180  /* seconds between RWHO updates    */
+#endif
+
+
+/* Various messages */
+
+#define DEFAULT_WELCOME_MESSAGE "Welcome to TinyMUCK.\r\nTo connect to your existing character, enter \"connect name password\"\r\nTo create a new character, enter \"create name password\"\r\nIMPORTANT! Use the news command to get up-to-date news on program changes.\r\n\r\nYou can disconnect using the QUIT command, which must be capitalized as shown.\r\n\r\nAbusing or harrassing other players will result in expellation.\r\nUse the WHO command to find out who is currently active.\r\n"
+
+#define REG_MSG "Sorry, but registration is in force.\r\nPlease send mail to A WIZARD to create a character.\r\n"
+
+#define LEAVE_MESSAGE "\r\nGoodbye!\r\n"
+
+
+
+/* Do you want some extra debugging code turned on.  Some can
+   be turned on independently of each other. */
+#ifdef DEBUG_EVERYTHING
+#define DEBUG_MALLOCS
+#define DEBUG_MALLOCS_RCHECK
+#define DEBUG_MALLOCS_TRACE
+#define DEBUG_GARBAGE_ACCESS 
+#define DEBUG_INTERP_STACK
+#define DEBUG_IMPROPER_LHS
+#endif
+
+
+
+/* Don't modify below here. */
+#define USE_EXTERNS
+
+
+#endif /* MUCK_CONFIG_H */

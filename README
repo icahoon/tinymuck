@@ -1,0 +1,84 @@
+README,v 2.3 1994/02/21 00:04:07 dmoore Exp
+
+*** General:
+
+This is a BETA release.  The server should be stable, but there currently
+isn't much admin documentation.  Player documentation is available
+online via 'help' and 'man'.  A player tutorial is available in
+docs/Muck.man.txt.
+
+You may want to look at the scripts in admin/scripts after you've
+played with your server for a while.  There is a sample restart
+script in the minimal-db directory which you may want to use.
+
+IMPORTANT: if you are upgrading from 2.3pl2 to this version, your
+	   database needs to be upgraded.  Use the provided script:
+		./convert-pl2-to-pl3 ~/mud/tt/data/in.tt.new
+	   For example.  It will make a backup of your database
+	   in <db>.bak where <db> is the name you gave it.
+	   Run the new sanity checker on this database to see how
+	   it is.
+
+IMPORTANT: if you are upgrading from 2.2 or the supported 2.2 derivatives
+	   you must use the convert _program_ on your database.
+
+
+*** Mailing list:
+
+There is a mailing list for tinymuck servers at:
+
+tinymuck-sloggers@tcp.com
+
+To join the list send mail to:
+
+majordomo@tcp.com with `subscribe tinymuck-sloggers' in the body.
+
+It is recommended that all people trying the server join the mailing list.
+This way you can be informed of new releases, get help and suggestions
+for administration issues (like: 'aiee, my db seems to be corrupted' or
+'hmm, what is a good way of purging old players).
+
+
+
+*** Reporting bugs:
+
+The author can be reached via dmoore@ucsd.edu.  Please include the string
+'tmuck2.4' in the subject to ensure faster response to letters.  Send all
+bug reports to this address.  An example of a good subject for a bug report
+would be "fatal @open bug in tmuck2.4".  A bad subject would be "yo, ojay".
+
+Include:
+
+1.	E-Mail Address.
+2.	What causes it?
+3.	Where in source code, if known?
+4.	Suggested fix, if you have one.
+
+
+
+*** Deriviative works:
+
+1. Should you make a substantial addition to this work and choose to
+distribute it, please inform me first.  If that is not possible, in
+your distribution, you should either:
+
+	a) Not use the name TinyMUCK as the program, and note and
+	acknowledge it's deriviative nature.
+
+	b) Use the name TinyMUCK and it's version number, but append
+	a suffix to distinguish it from the original.
+	(Eg. tinymuck2.2fb is the name used by the fuzzball deriviative.)
+
+2. You should distribute the source with the binaries (if binaries are
+provided), and update the documentation to reflect the changes you
+made.  If you are unable to do the latter, you must state the changes
+in some way evident to the user when either running the software or
+when unpacking the archive.
+
+3. Inform me of any note-worthy uses of this software.
+
+
+
+*** Thanks, and enjoy
+
+David Moore

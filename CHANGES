@@ -1,0 +1,365 @@
+CHANGES,v 2.50 1997/08/30 07:21:29 dmoore Exp
+
+Changes are now semi-sorted into the categories of player, wizard, admin,
+and programmer.  The player and wizard lists are things that might affect
+those people.  The admin and programmer sections have some overlap, and
+my criterion for the division is that admin items are usually normal
+header file settings.  Programmer section contains information about
+changes to more internal structures.
+
+2.4:
+----
+PLAYER:
+o	New strftime formats %i and %J.
+o	Players are now notified when they are forced by a wizard.
+o	In the case of a remote kill, both the room of the killer and the
+	killee are notified of the kill.
+WIZARD:
+ADMIN:
+o	New script 'admin/scripts/findflag' which prints out dbrefs
+	having a given flag.  Ex: findflag DARK in.foo.new
+PROGRAMMER:
+o	Changed the muck_strftime to take an extra argument to
+	let you use GMT time instead of the default of local time.
+o	Added %i to muck_strftime which returns a value like the
+	idle time for the WHO list.
+o	Added %J to muck_strftime which is the same as %j, except it
+	uses leading spaces instead of leading 0s.  This is used for
+	connect time in the WHO list.
+o	Changed the connect time/idle time for WHO list to use
+	Bufsprint with %T.
+o	Fixed typo in log.c in log_last_command.
+o	Added HAVE_STRERROR to disable setting of strerror macro,
+	instead of old checking for an already existing macro by that
+	name.
+o	Added HAVE_TZSET for people who have it.  Now you could
+	change the timezone of the mud by just setting an environment
+	variable TZ (perhaps in your restart script).
+o	Added HAVE_TZNAME for places (sys5) which don't have the
+	time zone in the struct tm, but do have it in tzname.
+o	Fixed up a call to strcasecmp and 3 to strncasecmp which showed
+	up incorrectly.  Changed to muck_stricmp, and muck_strnicmp.
+	Removed HAVE_STRCASECMP.
+o	Added ALIGN_BYTES to tell muck_malloc and debug_malloc about
+	alignment requirements.
+o	The tracing option for debugging malloc now checks the magic
+	numbers for the unfreed resources, to detect any overruns
+	they may have had.
+o	Fixed more getdtable size portability.
+o	Check more signals for existance on particular system before
+	using them.
+o	Fixed bug in compiler which would allow a tab to be placed in
+	a string.
+o	Fixed a bug with code structures where the refcount was decremented
+	inappropriately if a program had a ' construct and failed to
+	compile.  Removed clear_inst and clear_inst_un.  Now use
+	clear_inst_code if you are nuking an inst which is in a code
+	struct (ie clear_code or in compiler).  Use clear_inst_interp
+	if you are nuking an inst that is on a muf stack or similar
+	(ie anything in the interp).
+o	Fixed a bug with failed forks preventing future forked dumps.
+o	A failed 'accept' call will no longer cause the server to exit,
+	seen in the logs as: 'PERROR: main_loop: new_connection'.
+	Now it will be logged, but the server continues running as before.
+o	Added log_sanity command, for use by sanity routines.
+o	On systems without 'random', use 3 calls to rand to hopefully get
+	31 bits of a random number.
+o	When doing batch input processing, kick out of the loop to allow
+	output at reasonable intervals to keep perceived interactivity
+	level higher.
+o	Added a send_except call to interface.c to allow for more
+	efficient implementation of notify_except.
+o	Fixed bug which gave people 1 penny for every unlinked exit they
+	owned, anytime anyone did a recycle.
+o	Added make2_shared_string to speed up prim_strcat.
+o	Sped up property hashtable comparision, to avoid a stricmp call.
+o	Changed con_info in interface.c to return the time of the last
+	player command, not the idle time, since calling time() can be
+	very slow.  Now prim_conidle calls time() itself when needed.
+o	Added a match_everything call to match.c and made some routines
+	use it (more should be done).  Improved ordering of operations in
+	match_everything provides significant speedups for .pmatch and
+	similar operations in rooms with many objects.
+o	The muf `exit' primitive has been replaced with INST_EXIT.
+o	A new instruction INST_PICK acts like pick+1 and is used for dup,
+	swap, and pick by the optimizer when the operation is guaranteed
+	to succeed.
+o	New instruction INST_WIZCHECK forces a check for the state of
+	the frame to have wizard permissions.  It is emitted by the
+	optimizer in front of primitives which require wizperms.
+o	New file compile/optimize.c implements compile time stack depth
+	and argument type checking.  Other small optimizations are done
+	including some dead code elimination and minor constant folding.
+o	Various changes to the interpreter to speed it up quite a bit.
+o	The split bytecode and bytedata has been unified again.  The
+	space savings were insignificant.
+o	The muf flag? primitive now respects QUELL when checking for
+	the GOD flag (when GOD_FLAGS are enabled).
+	
+
+2.3 beta patchlevel 3:
+----------------------
+PLAYER:
+o	@stat, @find, @owned are now free for players.
+
+o	Server page costs PAGE_COST not LOOKUP_COST now.  PAGE_COST
+	defaults to 0.  If a player has negative pennies, they can't page.
+
+o	Object matching via '*player' is always free.
+
+o	Made @stat return global mud information for all players, and allow
+	any player to @stat themselves.
+
+o	Whispering to an object now yields an error rather than just
+	saying that the object is not connected.
+
+o	Added a magic cookie for '#' -> 'poundsign'.
+
+o	Programs no longer have that default 'scroll' message for a desc.
+
+o	Run programs on #0 and player on connect and disconnect.  Look
+	in properties named _connect and _disconnect.  Acts like @desc,
+	in that you'd do 'message' or '@545 arguments', etc.  If you use
+	MUF_CONNECT_HOOKS.
+
+WIZARD:
+
+ADMIN:
+o	No more config.h in distribution.  Copy include/config.h-dist
+	to include/config.h and edit that.  The files config.h-temp
+	and config.h-druid contain samples of a different way
+	of handling config.h.
+
+o	Portability change: added HAVE_UNISTD_H in config.h.
+	If HAVE_UNISTD_H is true, then sysconf is used to determine the
+	maximum number of file descriptors instead of getdtablesize.
+	This will also hopefully cut down on a lot of warnings for
+	compiling the interface/* files on certain machines.
+
+o	Portability change: Defaults to now using waitpid (posix)
+	instead of wait3 (bsd) to collect child processes.  Can force
+	wait3 in config.h.
+
+o	Added NEED_TIME_ZONE to config.h, for those systems which don't
+	have tm_zone field in their struct tm.
+
+o	Renamed LOG_STATUS, LOG_MUF, LOG_GRIPE to *_LOG and moved into
+	params.h
+
+o	The locations of the various files *_FILE in config.h have been
+	moved to params.h.
+
+o	Added DEFAULT_<type>_FLAGS, where <type> is ROOM, PLAYER, THING,
+	EXIT, or PROGRAM.  Set in config.h.
+
+o	If you want god flags, set GOD_FLAGS in config.h.
+
+o	Put in code to dump the various statistics tracked by the
+	hashtable routines at shutdown time into a file named by INFO_LOG.
+
+o	Got rid of COMPILE_ON_LOAD and INLINE_BUFFER.  The new
+	defaults are as off the former was false and the latter was true.
+
+o	Fix for broken tolower in ansify.h.  Missing NSIG guess in
+	ansify.h (you may find it in /usr/include/sys/signal.h).
+	If you don't have random/srandom check ansify.h.
+
+o	Have the logging of restricted flags use the full real name of the
+	flag instead of just whatever string the person used to set it.
+
+
+PROGRAMMER:
+name changes:
+o	Renamed MFLAGS to MKFLAGS in makefiles to make gnu make happier.
+
+o	Split src/db/db.c in src/db/db.c and src/db/dump_db.c.  db.c now
+	only has the in memory normal operation code.  And dump_db.c has
+	the code for reading and writing disk versions of the db.
+
+o	GOD no longer exists.  It's a variable named head_player which
+	defaults to #1, but will read from the db dump header.
+	GOD_PRIV has been removed, and is always on.  This means that
+	you can't mess with head_player, basically.  New macro
+	TrueGod makes God act more like Wizard wrt quell.
+
+pure bug fixes & misc:
+o	Fixed large possibly fatal and dangerous bug in recycling code.
+	Also made it slightly easier to read.
+
+o	Fixed 'put' muf primitive to prevent writing one too far down
+	the stack.
+
+o	Fixed a bug with macros which don't have bodies.
+
+o	Changed a couple lines to allow source to compile under AIX again.
+	Pay the price of about 10 extra useless warnings under gcc.
+
+o	Removed a duplicated call to match_home inside of prim_match.
+
+o	Made string comparison routines in stringutils.c treat NULL as "".
+
+o	Fix problem with a '%' appearing at the end of a string in
+	pronoun_substitute.
+
+o	Fixed a typo in boolexp.c from '%1' to '%i' in an error message.
+
+o	Added a check for properties without names when loading a db.
+
+o	Removed all calls to perror.
+
+o	Changed all references to DOWNCASE to tolower and got rid of case.c.
+
+o	When a new object is created, it removes any program text for
+	that object number in the muf directory.  This is normally
+	caused by a crash or such.
+
+o	Fixed some old code in LOG_FAILED_COMMANDS which used an old name
+	for a routine, preventing compiling.  I guess no one uses this.
+
+internal db structure changes:
+o	No more minimal_object structures.  All objects use the same
+	general_object struct now.
+
+o	Removed the struct frame * and struct code * on the player_object
+	structure and program_object (respectively) making them identical
+	to the general_object structure.  To keep track of the frames
+	for players a new file interp/frames.c was added.  Similarly
+	interp/code.c tracks code segments for programs.
+
+o	Added support for placing boolexp's into properties.  Placed
+	dbref locks into an internal property named 'Key', and removed
+	the old storage space on the general_object structure.
+
+o	Placed the struct prop_list directly in the general_object
+	structure instead of having it be a pointer.
+
+ownership lists:
+o	Added ownership lists which are only used internally.  You
+	probably don't want to use SetOwner anywhere now.  Look at
+	chown_object.
+
+o	@stat, @find, @owned all now use ownership lists, and therefore
+	avoid full db scans.
+
+o	@entrances uses ownership lists partially, so it only does
+	one full db scan instead of 2.  Still costs LOOKUP_COST.
+
+disk db changes:
+o	New database header for the number of hash entries at
+	dump time.
+
+o	Changed database header reading to allow for missing fields
+        by using defaults, and to have it log any new headers.
+
+o	Sanity checker now checks player_start, global_environment, and
+	head_player.
+
+cpu & memory changes:
+o	Fixed a major inefficiency in boolexp parsing.
+
+o	Slight change to the compression code to not do a separate
+	check for being compressed/uncompressed.  This should provide
+	a very slight speedup.
+
+o	Fixed up timeout to select to be more intelligent.  Now rather
+	than defaulting to 15 (which could waste cpu) it now picks
+	the minimum to next dump or rwho update.
+
+o	Hash table struct hash_entry's are now malloced in hunks
+	which saves a fairly decent amount of memory.
+
+o	Finally have small strings (<=63 bytes) be allocated in hunks,
+	much as other small structures have been for eons.  This saves
+	on malloc overheads.
+
+o	Changed calls to FREE to FREE_STRING if the item was created
+	by one of the ALLOC_*_STRING routines.
+
+o	Removed the hash value and length fields on interned strings.  Their
+	usage wasn't enough to waste the memory.
+
+o	Changed the compiler and interpreter to emit code in a manner
+	that is much more like real bytecode as opposed to '8 byte code'.
+	Reduces size of compiled programs to 5/8 of original size. 
+
+
+
+2.3 beta patchlevel 2:
+----------------------
+o	Added a README file which might help those who get ahold of
+	the code not already knowing about it.
+
+o	Changed lockout.c so that the dbref field can now contain *.
+	This allows you to easily lockout everyone except for specific
+	people (such as wizards).  An example of this was added to
+	minimal-db/data/lockout.sites.
+
+o	Added '-s' option to sanity which enabled the security check
+	option.  Basically this will spit out what objects in your
+	database have flags set which might be security problems.
+	You might wish to save the output of this, and run it on your
+	db every week and checkout new objects that appear in the list.
+
+o	Changed @link so that objects can be homed to people in addition
+	to rooms.
+
+o	Updated the forth.ref and help.txt files in minimal-db/data
+	to be the same as the newer ones in docs.
+
+o	Added chown_macros command to compile/macro.c and changed
+	builtins/toad.c to call this to chown all player macros
+	upon toading.
+
+o	Added code to compile/macro.c to detect bad macro owners when
+	the display macros command is run.
+
+o	Fixed bug in interp/primitives file related to the number of
+	arguments returned by 'over' and 'depth' primitives.
+
+o	Fixed it so that non-wizards can't set or clear BUILDER or
+	MUCKER bits if RESTRICTED_BUILDING isn't defined or MUCKER_ALL
+	is defined.
+
+o	Added '+' (plussign) and '-' (minussign) cookies.  Renamed
+	'amperstand' to 'ampersand' for '&' cookie.
+
+
+
+2.3 beta patchlevel 1:
+----------------------
+o	Fixed @open and @dig bugs which were introduced 10 minutes
+	before 2.3b release.
+
+o	Fixed muf property security hole allowing players to replace
+	other player's passwords with known strings.  (Noticed by Adam
+	Wozniak).
+
+o	Changed Makefiles to notice when sub files were edited and to
+	rebuild everything properly.
+
+o	Added some items to Makefile and ansify.h for helping to port
+	to some additional platforms.
+
+o	Stuck more system specific signal ifdefs in interface/main.c.
+
+o	Cleaned up the restart script provided.
+
+o	Fixed up a few errant settings in config.h.
+
+o	Added edit_quit_external and interp_quit_external to make it
+	easier for servers to kick players out of the editor on
+	disconnect.
+
+o	Converter modified to work with daemonmuck and shadow dbs.
+	(Modifications by Ian McCloghrie).
+
+o	Added command line options to convert and sanity.  (Added by
+	Ian McCloghrie).
+
+o	Added a sample lockout.sites to minimal-db/data.
+
+2.3 beta release:
+-----------------
+The ''vanilla'' TinyMUCK 2.2 release is taken as the standard base for
+the changes described here.  The file old/CHANGES provides a historical
+perspective on the development of 2.2 from TinyMUD.

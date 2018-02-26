@@ -1,0 +1,881 @@
+General purpose:
+@ACTION      @ATTACH      @CHOWN       @CREATE      @DESCRIBE    @DIG        
+@DROP        @EDIT        @ENTRANCES   @FAIL        @FIND        @LINK        
+@LOCK        @NAME        @ODROP       @OFAIL       @OPEN        @OSUCCESS
+@OWNED       @PASSWORD    @PROG        @RECYCLE     @SET         @STATS
+@SUCCESS     @TELEPORT    @TRACE       @UNLINK      @UNLOCK      @VERSION
+DROP         EXAMINE      GET          GIVE         GRIPE        HELP
+HOME         INVENTORY    KILL         LOOK         MAN          NEWS
+OUTPUTPREFIX OUTPUTSUFFIX PAGE         POSE         QUIT         ROB
+SAY          SCORE        WHISPER      WHO
+
+Topics:
+@Q           actions      building     control      conventions  exits
+expansion    flags        globals      goal         matching     objects
+parents      pennies      programs     substitutions             _connect
+
+Wizard commands:
+@BOOT        @DUMP        @FORCE       @NEWPASSWORD @PCREATE     @SHUTDOWN
+@TOAD        @WALL
+&
+conventions
+The conventions used by help information are as follows:
+<>       means to specify the type of thing inside the brackets, so <name>
+         means to type a name and <object> to specify an object.
+[]       Square brackets refer to parameters which are optional.
+&&
+ACTION, @ACTION
+@ACTION
+@action <name>=<source>.  Creates a new action and attaches it to the thing,
+room, or player specified.  You may only create actions on things you con-
+trol.  Creating an action costs 1 penny.  The action can then be linked with
+the command @LINK.
+
+If <source> is a room, this command is equivalent to "@open <name>".
+
+See @LINK, @OPEN.
+
+This command is restricted to builders if the mud is compiled with restricted
+building.
+&&
+ATTACH, @ATTACH
+@ATTACH
+@attach <action>=<new source>.  Removes the action from where it was and at-
+taches it to the new source.  You must control the action and both sources.
+
+You currently can't @ATTACH remote actions by number.  This means that about
+the only way to move exits from room to room is to @ATTACH them to yourself
+and @ATTACH them a second time after going where you want to move them to.
+
+This command is restricted to builders if the mud is compiled with restricted
+building.
+&&
+BOOT, @BOOT
+@BOOT
+@boot <player>.  Disconnects a player from the game.  If a player is connected
+more than once it affects the most recent connection.  This command is res-
+tricted to wizards.
+&&
+CHOWN, @CHOWN
+@CHOWN
+@chown <object> [=<player>].  Changes the ownership of <object> to <player>,
+or if no player is given, to yourself.  Mortals may only use this command on
+objects with a CHOWN_OK flag; furthermore, mortals cannot @CHOWN a room unless
+they are standing in it, and may not @CHOWN a thing unless they are holding
+it.  Mortals may not @CHOWN programs at all.  Wizards may @chown anything
+(except players) to anyone.
+&&
+CREATE, @CREATE
+@CREATE
+@create <object> [=<cost>].  Creates a new thing and places it in your inven-
+tory.  This costs at least ten pennies.  If <cost> is specified, you are
+charged that many pennies, and in return, the object gets a value according to
+the formula ((cost / 5) - 1).  Usually the maximum value of a thing is 100
+pennies, which would cost 505 pennies to create.
+
+This command is restricted to builders if the mud is compiled with restricted
+building.
+&&
+DESCRIBE, @DESCRIBE
+@DESCRIBE
+@describe <object> [=<text>].  Sets the description field of <object> to
+<text>; this affects what people who look at it see.  If <text> is not speci-
+fied, the description field is cleared.
+&&
+DIG, @DIG
+@DIG
+@dig <room> [=<parent>].  Creates a new room and sets its parent.  If no
+parent is given, or if the parent room is not LINK_OK, it defaults to the glo-
+bal environment, which is typically room #0.  Digging a room costs 10 pennies.
+
+This command is restricted to builders if the mud is compiled with restricted
+building.
+&
+@DROP
+@drop <object> [=<text>].  Sets the drop field of <object> to <text>.  If
+<text> is not specified, the drop field is cleared.  The drop message on a
+thing or a program is displayed when you drop it.  On an action/exit, it
+is displayed upon entering the destination room (if the action goes to a pro-
+gram or an object the drop field is unused).  On a player, it appears (to the
+killer) when he kills the player .  On a room, it is displayed when an object
+is dropped in that room.  See DROP.
+&&
+DUMP, @DUMP
+@DUMP
+@dump.  Saves the database to disk.  This is done periodically, and after an
+@shutdown.  The command is wizard-only.
+&&
+EDIT, @EDIT
+@EDIT
+@edit <program>.  Searches for a program and if a match is found, puts the
+player into edit mode.  Programs must be created with @PROG. (Can only used by
+people with MUCKER bits unless the muck is MUCKER_ALL.)  See @PROG.
+&&
+ENTRANCES, @ENTRANCES
+@ENTRANCES
+@entrances <object>.  Provides a list of everything linked to that object.
+These are usually exits/actions, but if the object is a room these can include
+players or things with their homes there.  The list is divided into two
+sections: objects you own and objects you don't.  See @LINK.
+&&
+FAIL, @FAIL
+@FAIL
+@fail <object> [=<text>].  Sets the fail field  of <object> to <text>.  If
+<text> is not specified, the fail field is cleared.  This field is displayed
+when you try to pick up a thing or program, rob a player, use an
+action/exit, or look around a room when any of these things are locked.  See
+@LOCK.
+&&
+FIND, @FIND
+@FIND
+@find [<string>].  Searches through the entire database for rooms, things,
+players, and programs you control, optionally matching their names to <string>
+if given.  See @OWNED.
+&&
+FORCE, @FORCE
+@FORCE
+@force <player>=<command>.  Only for use by wizards.  Causes the game to pro-
+cess <command> as if typed by <player>.  The head wizard (normally #1) cannot
+be forced by his/her sub-wizards.
+&&
+LINK, @LINK
+@LINK
+@link  <object1>=<object2> [; <object3>; ... <objectn> ].  Links <object1> to
+<object2>.  <object1> must either be an unlinked exit, or be controlled by
+you.  If <object2> is not owned by you, it must have the L flag, unless you are
+setting a home (linking yourself or a thing to a room) in which case <object2>
+must have the A flag.
+
+If <object1> is an action, you may link it to more than one object by specify-
+ing a list separated by semi-colons; at most one of these can be a player,
+room, or program.
+
+The effect of @LINK is as follows: sets a home for players and things, sets a
+dropto on a room (a room where dropped objects go), and sets a destination on
+an action/exit.  Programs cannot be @LINKed.
+
+When you use an action/exit, the effect depends on what kind of destination it
+was linked to.  If the destination is another action, that in turn gets run.
+If it's a player, you get teleported to the player's current room (the player
+must be JUMP_OK, however).  If it's a room, you go to the room.  If it's an
+object, the object comes to you, in which case if the source is also an ob-
+ject, and the action does not have the STICKY flag, the source object goes
+home.  If the action is linked to a program, the program runs.
+
+To @LINK an exit which is already linked, @UNLINK it first.
+
+If you link an action/exit you don't own, the exit becomes owned by you and
+the penny charge is transferred from you to the previous owner.
+
+This command is restricted to builders if the mud is compiled with restricted
+building.
+&&
+LIST, @LIST
+@LIST
+@list <program> [=[line1] [-] [line2]].  Lists lines in a program, provided
+you control it or it is LINK_OK.  Zero, one, or two line numbers may be speci-
+fied, denoting the range of lines to list.  If no lines are given, the entire
+program is listed.
+&&
+LOCK, @LOCK
+@LOCK
+@lock <object>=<key>.  Sets the key for <object> to that specified by <key>.
+<key> is a full boolean expression, which may contain any of the characters !
+| & ( ), and refer to things, players, programs, or properties.  Players may
+be specified using the *<player> format; this costs one penny.  Properties are
+specified using the name:value format, so an exit that lets through only males
+would be locked to sex:male.
+
+Locks control who may pick up a thing or program (not who may run the pro-
+gram!) and who may use an action/exit, displaying the success/osuccess or
+fail/ofail depending on whether the lock is passed.  Locks on rooms display
+those messages when someone looks around in the room, but do not keep people
+out of the room.  Locks on players keep the player from being robbed; to not
+let others rob you, @lock me=me (or @lock me=me&!me if you don't want to be
+able to rob yourself either.)
+
+Locking something to a player or thing lets the player, or someone carrying
+the thing, pass; locking to a program makes the program run, with the lock
+passed if the program returns with a non-zero value on the stack.  A lock
+to a room is passed only if the person trying the lock is in that room; this
+is useful for parent rooms containing exits that cannot be used from sub-
+rooms.  Finally, one may lock objects to properties; this succeeds for people
+with the property set or who carry things with the property set.
+&&
+NAME, @NAME
+@NAME
+@name <object>=<name> [<password>].  Sets the name field of <object> to
+<name>.  <name> cannot be empty, or contain the special characters ! | & ( )
+in such a way as to resemble a @LOCK expression.  <password> must be supplied
+to rename a player; and player names may not contain spaces or be the same as
+another player name (ignoring case).  Wizards can rename any player but still
+must include the password.
+&&
+NEWPASSWORD, @NEWPASSWORD
+@NEWPASSWORD
+@newpassword <player> [=<password>].  Sets the password field of <player> to
+<password>.  If <password> is not specified, the password field is cleared.  A
+player with no password cannot rename him/herself, and logs in using any or no
+password.  The head wizard's password (he is normally player #1) can't be
+changed even by other wizards.
+
+This is a wizard command, to change a player's password without knowing the
+old one; players should use @password to change their password.
+&&
+ODROP, @ODROP
+@ODROP
+@odrop <object> [=<text>].  Sets the odrop field of <object> to <text>.  If
+<text> is not specified, the odrop field is cleared.  Odrop on a thing is
+displayed prefixed by the player's name when s/he drops that thing.  On an
+action/exit, it is displayed after the player arrives at the destination (ac-
+tions connected to things or programs don't use their @odrop fields).  On a
+player, it is displayed when the player is killed, after the `name  killed
+victim!' message, _without_ being prefixed by the player's name.  On a room,
+it is displayed when a thing is dropped there, prefixed by the thing's name.
+&&
+OFAIL, @OFAIL
+@OFAIL
+@ofail <object> [=<text>].  Sets the ofail field of <object> to <text>.  If
+<text> is not specified, the ofail field is cleared.  This field is displayed
+to everybody except you when you try to pick up a thing or program, rob a
+player, use an action/exit, or look around a room when these are locked.
+&&
+OPEN, @OPEN
+@OPEN
+@open <exit> [=<object> [; <object2>; ... <objectn> ]].  Opens an exit in the
+current room, optionally attempting to link it simultaneously.  Opening an
+exit costs a penny, and another if you're linking it, and you must control the
+room where it is being opened.
+
+The `@open <exit> = <object> [;<object2>; ... objectn>]' command is identical
+to the command sequence
+    @action <exit> = here or @open <exit>
+followed by
+    @link <exit> = <object> [;<object2>; ... <objectn>]
+
+This command is restricted to builders if the mud is compiled with restricted
+building.
+&&
+OSUCCESS, @OSUCCESS
+@OSUCCESS
+@osucc <object>  [=<text>].  Sets the osuccess field of <object> to <text>.
+If <text> is not specified, the osuccess field is cleared.  This field is
+displayed to everybody except you when you pick up a thing or program, rob a
+player, use an action/exit, or look around a room, when these are unlocked.
+&&
+OWNED, @OWNED
+@OWNED
+@owned [<player>].  Lists everything you own.  Wizards may specify a player
+argument.  This list includes exits, unlike @FIND.
+&&
+PASSWORD, @PASSWORD
+@PASSWORD
+@password <old>=<new>.  Change your password.
+&&
+PCREATE, @PCREATE
+@PCREATE
+@pcreate <player>=<password>.  Only wizards may use this command.  Create a
+new player named <player> with <password> as his/her password.
+&&
+PROG, @PROG
+@PROG
+@prog <program>.  Create a new program, or enter edit mode on an existing one.
+Players must have a MUCKER bit to program unless the mud was compiled with
+MUCKER_ALL.  See @EDIT and Programmer's Reference.
+&&
+PURGE, @PURGE
+@PURGE
+@purge <player>.  Recycles all of a player's possessions; this is a wizard-only
+command.
+&&
+RECYCLE, @RECYCLE
+@RECYCLE
+@recycle <object>.  Destroy an object and remove all references to it within
+the database.  The object is then added to a free list, and newly created ob-
+jects are assigned from the pool of recycled objects first.  You *must* own
+the object being recycled; even wizards must use the @chown command to recycle
+someone else's belongings.
+
+If you recycle a room, the contents go home.  If their home was the room, it
+becomes the starting room instead.
+
+Recycling a room recovers the 10 penny cost, and recycling an exit recovers
+the 1 penny cost (and possibly the link cost).  Recycling a thing only re-
+covers the thing's value, not the cost of creating the thing.
+&&
+SET, @SET
+@SET
+@set <object> = [!] <flag> -or-
+@set <object> = <property> : [ <string> ] -or-
+@set <object> = :
+
+@set does one of three things on TinyMUCK: it modifies flags, adds properties
+to an object, or removes properties from an object.  Using the first format,
+you may set flags, which are: WIZARD, LINK_OK, DARK [DEBUG], STICKY [SETUID],
+JUMP_OK, CHOWN_OK, HAVEN, ABODE, QUELL, MURKY.
+
+Optional flags which may or may not be on a given site are: BUILDER and MUCKER.
+
+The second format sets <property> on <object> to <string>, or if <string> is
+not given, removes <property>.
+
+The third format removes all properties from an object.
+
+@set is not used for setting the fields which are set with @DESC, @SUCC,
+@OSUCC, @FAIL, @OFAIL, @DROP, @ODROP, or @NAME commands.  For instance, if you
+use "@set <object>=desc:<string>", this will set a property named "desc" which
+does not affect the object's description.
+&&
+SHUTDOWN, @SHUTDOWN
+@SHUTDOWN
+@shutdown.  Dumps the database and shuts the game down.  This is a wizard-only
+command.
+&&
+STATS, @STATS
+@STATS
+@stats [<player>].  The command displays the number of objects on the Muck,
+and a breakdown with respect to type of object: rooms, exits, things, pro-
+grams, players, and garbage.  "@stats me" will give a personal list; wizards
+can do an @STATS command on any player.
+
+&&
+SUCCESS, @SUCCESS
+@SUCCESS
+@succ <object> [=<text>].  Sets the success field of <object> to <text>.  If
+<text> is not specified, the success field is cleared.  This field is displayed
+when you pick up a thing or program, rob a player, use an action/exit, or look
+around a room if these things are unlocked.
+&&
+TELEPORT, @TELEPORT
+@TELEPORT
+@teleport <arg1> [=<destination>].  Moves <arg1> to <destination>; if <desti-
+nation> is not given, moves you to <arg1>.  The rules are the same as for
+`moveto' within MUF; the source, object, and destination must be controlled by
+you or JUMP_OK.  The destination may also be HOME.  Also, you may always
+teleport something owned by you out of any source, and you may always teleport
+something home if you own the source.
+
+If the thing and destination are rooms, you may also do the teleport if the
+destination is LINK_OK or ABODE; this sets the room's parent.
+&&
+TOAD, @TOAD
+@TOAD
+@toad <player> [=<destination>].  Turns <player> into a slimy toad, destroying
+his/her character and disconnecting him/her from the game.  The toad is owned
+by the wizard who does the toading; the player's objects end up owned either
+by the head wizard (usually #1) or by the optional destination player.
+&&
+TRACE, @TRACE
+@TRACE
+@trace <object> [=<depth>].  Starts with <object> and traces all location
+fields, until the global-environment room is reached or the optional <depth>
+is specified.  This is generally useful for finding which rooms are parents in
+your hierarchy.  If you cannot link to a particular location its name is re-
+placed by **Missing**.
+&&
+UNLINK, @UNLINK
+@UNLINK
+@unlink <action/exit/room>.  Removes any and all destination fields of the
+specified <action/exit>, or removes the dropto from <room> (usually "here").
+Unlinked exits may be relinked by any player.
+&&
+UNLOCK, @UNLOCK
+@UNLOCK
+@unlock <object>.  Removes any lock on the specified object.
+&&
+VERSION, @VERSION
+@VERSION
+@version.  Displays the Muck version number.
+&&
+WALL, @WALL
+@WALL
+@wall <message>.  Shouts a message to every player in the game.  (Wizard-only.)
+&
+DROP
+drop <thing|program>.  Drops the <thing> if you are holding it.  It moves the
+thing to the room you are in, unless the thing's STICKY flag is set (in which
+case the thing goes home), or the room has a drop-to (in which case the thing
+goes there; if the room is STICKY this doesn't happen until all players leave
+the room).  Programs are much like things but are not affected by room droptos
+or STICKY flags.  See @DROP.
+&
+EXAMINE
+examine <object>.  If you control <object>, this shows a complete breakdown of
+all fields, flags, properties, etc.  associated with the object.  Program-
+executing fields are displayed as their true text, rather than executing the
+program in question.  If you do not control <object>, it prints the owner of
+the object in question.
+&
+GET
+get <object>.  Attempts to pick up <object>.  The lock on <object> is checked
+for a success (true), and the normal path of success/fail is then taken.  On
+success the object is placed in your inventory.
+&
+GIVE
+give <player|thing>=<amount>.  Gives <amount> pennies from your supply to
+<player>.  Mortals may only give positive amounts and may not cause a player
+to have more than 10000 pennies.  Wizards may give negative amounts and may
+change the value of a thing by giving to it; wizards' own money supply does not
+change by giving out money.
+
+It is normally only possible to give pennies, although many Mucks have MUF
+programs which also let you give away things.
+&
+GOTO
+goto <direction>.  Attempts to find an exit by that name.  Goto is unnecessary
+and much like LET in Basic (read: silly).
+&
+GRIPE
+gripe [<message>].  Sends <message> to the system maintainer.
+&
+HELP
+help <command>.  Or "help" for a list of commands.
+&
+HOME
+home.  Goes home, and sends all the things you are carrying to their homes.
+(Programs don't have homes, and stay with you.)  Unlike most commands, this
+command cannot be overridden by actions with similar names.
+
+The home of a player or thing is set with the @link command.  Other types of
+objects do not have homes.
+&
+INVENTORY
+inventory.  Lists the objects you are carrying, as well as how many pennies
+you have.
+&
+KILL
+kill <player> [=<cost>].  A successful kill prints the player's @drop to the
+killer and tells the room `<killer> killed <victim>!', followed by the
+player's @odrop.  It sends the player and all objects s/he is carrying to their
+respective homes.  The probability of killing the player is <cost> percent;
+the default is 10, and spending 100 pennies is a sure kill.  Wizards cannot be
+killed unless they are set QUELL, and nobody can be killed in rooms which have
+the HAVEN flag set.
+&
+LOOK
+look <object>.  Looks around at the current room, or at <object> if specified.
+For players, displays their description and inventory; for rooms, the name,
+description, succ/fail message, and contents; and for anything else, the
+description.  It also triggers succ/osucc/fail/ofail messages on rooms, and
+programs in descriptions.  Contents of DARK rooms, and contents which are DARK
+objects, DARK players, or non LINK-OK programs, are not shown unless you con-
+trol the contents or the room.
+&
+MOVE
+move <direction>.  See GOTO.
+&
+MAN
+man [<topic>].  Displays help information for programmers.
+&
+NEWS
+news [<topic>].  Displays the game's news.
+&
+OUTPUTPREFIX
+OUTPUTPREFIX [<string>].  Must be in all capitals, and must be typed in full.
+This prints the given string before the output of every command.  It is not
+possible to override this command by creating an action with the same name.
+
+&
+OUTPUTSUFFIX [<string>].  Must be in all capitals, and must be typed in full.
+This prints the given string after the output of every command.  It is not
+possible to override this command by creating an action with the same name.
+&
+PAGE
+page <player> [=<message>].  Sends your name and location to <player>, option-
+ally passing them <message> as well.  A player who is set HAVEN cannot be
+paged.
+
+This command is one of the commands more frequently overridden by global
+commands.
+
+See globals.
+&&
+POSE, :
+POSE
+:<text> or pose <text>.  Displays your name, followed by <text>.  The : format
+is automatically converted to the `pose' format internally.
+&
+PUT
+put <object>.  Synonym for DROP.
+&
+QUIT
+QUIT.  Logs you off the game.  Must be typed in all capitals.
+&
+READ
+read [<object>].  Synonym for LOOK.
+&
+ROB
+rob <player>.  Attempts to steal a penny from <player>.  The lock on <player>
+is checked, and you succeed or fail appropriately, printing the succ/osucc or
+fail/ofail messages.  If you succeed, the message `You stole a penny.' is al-
+ways displayed.
+
+See @LOCK.
+&&
+SAY, "
+SAY
+"<text> or say <text>.  Displays the message '<player> says, "<text>"' to oth-
+er people, and the message 'You say, "<text>"' to yourself.  The " format is
+automatically converted to the `say' format internally.
+&
+SCORE
+score.  Displays how many pennies you have.
+&
+TAKE
+take <object>.  Synonym for GET.
+&
+THROW
+throw <object>.  Synonym for DROP.
+&
+WHISPER
+whisper <player>=<message>.  Gives <player> a private message, undetectable by
+others in the same room.  Wizards may whisper to players outside the room by
+using a *player format.
+&
+WHO
+WHO[<match>].  List names of the players logged in, and their idle times.  If
+<match> is specified, only names that start with <match> are displayed.  Must
+be typed in all capitals.  This command can be used even before connecting to
+your character on the Muck, and it cannot be overridden by an action with the
+same name.
+&&
+flag list,flag,flags list,flags
+FLAGS
+Available flags are:
+ABODE       BUILDER    CHOWN_OK    DARK        HAVEN       JUMP_OK
+LINK_OK     MUCKER     QUELL       STICKY      WIZARD
+
+For programs, the D and S flags are DEBUG and SETUID.
+
+For rooms, the M flag is MURKY.
+
+Flags are set with the command "@set <thing>=<flag>" and unset with "@set
+<thing>=!<flag>".  Some flags can be set only by wizards.  Type "help
+<flagname>" for details.
+&
+<, backarrow
+See expansion.
+&&
+<flagname>,<thing>,<flag>,<player>,<message>,<match>,<object>,<text>,<name>,<source>,<cost>,<message>,<new source>,<parent>,<program>,<key>
+When the help information encloses something in angle brackets < >, that means
+you should type something fitting the description inside the brackets, not
+that you should type the brackets and the literal words in there.
+&
+ABODE
+On rooms, lets any player set a home there (@link me=here or @link
+thing=here).  It also lets everyone see the object number and flags (which is
+its only effect if used on a non-room).
+&
+BUILDER
+If the Muck is compiled with restricted building, only players with a B flag
+may create rooms, things, or exits/actions.
+&
+CHOWN_OK
+Players may set the C flag on rooms, things, or exits/actions so that other
+players may @chown them and take ownership.  This flag does not work on pro-
+grams, and on things only works when the thing is carried; thus, you can make
+a thing that only a certain player may @chown by setting the C flag and
+locking it to them.
+&&
+DARK, DEBUG
+D[ARK], D[EBUG]
+Dark players and things are not visible in a room's contents; dark exits
+don't give "has arrived." and "has left." messages.  Either way, you can al-
+ways see your own things, and wizards can see everything.  Mortals may set
+this flag only on rooms or programs.  On a program this becomes the DEBUG
+flag, causing the program to print out a stack dump with each instruction.
+&
+HAVEN
+Players may not kill in a room with this flag; players with a H flag cannot be
+paged.  The flag has no effect on things, exits, or programs.
+&
+JUMP_OK
+The JUMP_OK flag controls where you can teleport; if you don't control a
+thing, the source, or the destination, it must be JUMP_OK for you to be able to
+do the teleport.
+
+The J flag has a double meaning on players; actions connected to a player may
+only be used if the J flag is set.
+
+See @TELEPORT.
+&
+KLUE
+This flag does not exist.  Nice try, however.
+&
+LINK_OK
+If something is LINK_OK, any player can make a link to there; in addition, any
+player may parent a room to a LINK_OK room.  If a player links to someone
+else's program, that program must remain LINK_OK for the player to be able to
+run it.
+&
+LINE_NUMBERS
+This is an internal flag present on players; players with the flag list MUF
+programs with line numbers.  This flag is set by turning numbering on and off
+within the MUF editor, not with a @set command.
+&
+MUCKER
+Players with a M bit may program in MUF (unless the Muck is compiled with
+MUCKER_ALL defined, in which case all players may use MUF).  Only wizards may
+set this flag.  The flag has no effect except on players.
+&
+MURKY
+Rooms with this flag do not show contents to anyone, but has arrived/left/
+connected/disconnected messages are not affected (unlike DARK).  This flag
+is useful when the SUCCESS message runs a program to display contents in a
+customized way.
+&
+QUELL
+Wizards with this flag set act like non-wizards; they can't see or examine
+things they could not as a normal player, they get normal WHO lists, and they
+may be killed.  Their W flag is also not visible by MUF when they are Q.  The
+flag has no effect on regular players.
+&&
+STICKY, SETUID
+S[TICKY], S[ETUID]
+If a thing is S, it goes home when dropped.  If a room is S, things dropped
+there don't go to the room's dropto until no players are present.  If an ac-
+tion is S and located on a thing, the thing on which it is located does not
+go home when the action is used.
+
+On programs, the flag is the SETUID flag; it means the program runs with the
+owner's permissions, instead of the permissions of the player running it.
+&
+TEMPLE
+Older TinyMUDs, as well as current TinyMUSHes, have a TEMPLE flag; when you
+drop a thing you don't own in a room with a TEMPLE flag, you receive pennies
+equal to the thing's value.  This function is now performed with appropriate
+MUF programs.
+&
+WIZARD
+Wizard players help run the mud; they can examine anything, set anything, and
+cannot be killed, and they can see players' sitenames and mud locations on the
+WHO list.  The WIZARD flag on a program lets the program run with wizard per-
+missions _if_ the program is wizard-owned.  The flag has no meaning on things,
+exits/actions, or rooms.  Only the head wizard (#1 usually) can set it on
+other players, and only him and other wizards can set it on anything else.
+&
+actions, exits
+Actions and exits are really the same thing.  Whenever the user types a com-
+mand, the command is matched against the nearby exits and actions and execut-
+ed.  If the action is not linked or locked to a program, only the exact
+command typed by the user is matched; an action may have several names if the
+names are separated by semicolons.  If the action is linked/locked to a pro-
+gram, the action also matches against leftmost words of the command; the
+remainder is placed on the stack when the program is called.  Effects of ac-
+tions depend on what they are linked to:
+
+Rooms: you go to the room.  (An exit is just an action attached to a room
+    and linked to another room.)
+Things: the thing is brought to you.  If the action is attached to a thing, and
+    the action does not have the S flag, the first thing also goes home.
+Players: you are brought to the player (if the player has a J flag).
+Other actions: the other action runs.
+Programs: the program runs.
+
+See @ACTION, @ATTACH, @LINK, @UNLINK, flags, and globals.
+&
+building
+Simple building commands are as follows.  (Don't type the <>, and use a number
+instead of nnn).
+
+@dig <room>               Create a room.
+@create <thing>           Create a thing.
+@open <exit>              Create an exit (without linking).
+@link <exit>=#nnn         Link an unlinked exit somewhere.
+@open <exit>=#nnn         Combination of the above two.
+@action <action>=<source> Create an action (like an exit, but may be
+                          located on things or people).
+@recycle <name>           Recycle it.
+
+@name <thing>=<newname>   Set a name.
+@desc <thing>=<desc>      Set a description.
+
+See also @LOCK, @SUCC, @OSUCC, @FAIL, @OFAIL, @DROP, @ODROP, @SET, parents.
+&
+parents
+A room's parent may be set with @tel here=#nnn (if you own the parent or it is
+LINK_OK).  Any actions/exits in the parent will be used if there are no others
+available with the same name.  For instance, a group of beach rooms could be
+given a parent which has a "swim" exit in it, which is locked and prints a
+message; people can type "swim" in any of the beach rooms and get the same
+message.  Or the parent for the whole mud (the global environment, which is
+usually #0) could have a "mail" action which runs a mail program; this way
+anyone anywhere on the mud can use the mail system.
+
+Unlike Mush parents, only the actions on the parents, and nothing else, apply
+to the children.
+
+A room's current chain of parents can be found with @TRACE.
+&
+gender, sex
+@set me=sex:male (or female or neuter).  See substitutions.
+&
+substitutions
+Pronoun substitutions are done on @OSUCC, @OFAIL, and @ODROP; the name of the
+player is placed on the beginning and pronoun substitutions are done on the
+string before printing it.  This replaces all %a, %n, %o, %p, %r, and %s with
+the appropriate pronouns; if these are capitalized as %A, %N, %O, %P, %R, and
+%S, the pronoun will also be capitalized.  Many MUF programs also do pronoun
+substitutions.
+
+Example: if the @osucc was "buys %r a lollipop.", the message for a male
+player would be "<name> buys himself a lollipop."
+
+If you set your gender with @set me=sex:male, female, or neuter, pronoun sub-
+stitutions will work properly.  You can also set properties named %a, %n, %o,
+%p, %r, and %s directly to override the defaults.
+
+    Substitutions   sex:male  sex:female sex:neuter  (unset)
+    %a (absolute)       his        hers       its     <name>'s
+         %n         (%n is always replaced with the player's name)
+    %o (object)         him         her        it     <name>
+    %p (possessive)     his         her       its     <name>'s
+    %r (reflexive)  himself     herself    itself     <name>
+    %s (subject)         he         she        it     <name>
+&
+goal
+There is no goal to Muck.  The only purpose is to wander around, and build,
+explore, program, and chat.
+&
+matching
+Command names get matched in the following order, from highest to lowest
+priority:
+    Actions on the room.
+    Actions on things you are carrying.
+    Actions on things in the room.
+    Actions on yourself.
+    Actions on parent rooms.
+    Built-in commands.  (home, QUIT, and WHO may not be overridden with
+        actions)
+&
+objects
+"objects" refers to anything: players, rooms, things, exits/actions, and pro-
+grams.  To specify an object, use either its name, or a # followed by the ob-
+ject number.  (Object numbers are visible if you own the object or if the ob-
+ject has certain flags.)
+&&
+programs, programming
+programming
+Programs may be written in a Forth-like stack-based language called MUF.  Un-
+less the mud is compiled with MUCKER_ALL, you must be set M by a wizard in
+order to be able to program.
+
+If you want to use an already-written program, you can make an action to it:
+    @action <name>=me
+    @link <name>=#<number>
+where <name> and <number> are replaced by the name you want to be able to use
+to run the program by, and <number> is the program number.  Then, whenever you
+typed the name it would run the program.  You can also use programs in fields;
+for instance, "@desc me=@<number> text" would run the program with that number
+with the parameter "text" whenever someone looks at you.
+
+See the MUF programmers' documentation for details.
+&
+pennies
+Certain commands cost pennies.  You will occasionally find pennies randomly;
+you can also be given pennies by other players using the `give' command, and
+you can get pennies from appropriately-written MUF programs.  Penny costs are
+usually as follows, although the person who runs the Muck can set it up
+differently:
+
+    Minimum cost to @create a thing: 10
+    Cost to @open or @action an exit/action: 1
+    Cost to @link an exit/action: 1
+    Cost to @dig a room: 10
+    Cost to page: 0 (player must still have >= 0 pennies)
+
+    Maximum pennies allowable: 10000
+
+See @ACTION, @CREATE, @DIG, @LINK, @OPEN, @RECYCLE, GIVE, PAGE, ROB.
+&
+control
+Generally, you "control" objects owned by you, and can manipulate them as you
+wish.  Wizards on the Muck control everything.
+&&
+global,globals, global environment,global-environment,environment
+globals
+New global commands in Mucks are normally created with actions on the global
+environment.  This is a special room which all rooms are parented to; it's
+usually room #0.
+&
+@Q
+@Q is not a command used in MUCK, but a command used when programs are await-
+ing input; this always quits the program immediately.
+&
+MUCKER_ALL
+This is a compile-time option which lets everyone on a Muck program.  To tell
+if your Muck has it: If anyone (including you) has a MUCKER bit, the Muck is
+not MUCKER_ALL.  Otherwise, see if you're allowed to use @PROG; if you are, it
+is.
+&
+mortals
+Refers to anyone who isn't a wizard.  If you don't know, you're one.
+&&
+cookies,expansion
+expansion
+Commands starting with the characters :, ", ;, |, <, and > are expanded as
+follows:
+    :     pose                "     say              ;     semicolon
+    |     paste               <     backarrow        >     forearrow
+    =     equalsign           +     plussign         -     minussign
+    (     lparen              )     rparen           [     lbracket
+    ]     rbracket            &     ampersand        #     poundsign
+A space is added after the command.  For instance, if you type ";'s", it will
+be expanded to "semicolon 's".  If there is an action named "semicolon" linked
+to a program, that program would run with the parameter "'s".  This could be
+used, for instance, to simulate the behavior of Mush on lines starting with ; .
+Only "pose" and "say" are normally Muck commands; using the others will give
+"Huh?" error messages unless someone created actions with the appropriate
+names.
+&
+;, semicolon
+See expansion.
+&
+|, paste
+See expansion.
+&
+>, forearrow
+See expansion.
+&
+=,equalsign
+See expansion.
+&
++,plussign
+See expansion.
+&
+-,minussign
+See expansion.
+&
+(,lparen
+See expansion.
+&
+),rparen
+See expansion.
+&
+[,lbracket
+See expansion.
+&
+],rbracket
+See expansion.
+&
+&,ampersand
+See expansion.
+&
+&,poundsign
+See expansion.
+&
+_connect,_disconnect
+These properties are special; properties with these names are shown to players
+on the first connect and last disconnect respectively.  Properties both on the
+global environment (usually #0) and on the player are displayed; the global
+one is displayed before the player one when connecting, and after the player
+one when disconnecting.
+
+The properties are set with normal @set commands: "@set me=_connect:Hi!".
+
+The "@<number> <text>" format is supported and will run the program whose
+number is specified.  All such programs run as if the player were running a
+program directly, so to avoid permission problems any global programs used
+this way should probably be LINK_OK.
+
+See @SET.

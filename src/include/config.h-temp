@@ -1,0 +1,16 @@
+#ifndef MUCK_CONFIG_H_TEMP
+#define MUCK_CONFIG_H_TEMP
+
+#define DEBUG_EVERYTHING
+#define DUMP_INTERVAL 300
+
+#include "config.h-dist"
+
+
+/* Solaris settings. */
+#undef HAVE_RANDOM
+#define HAVE_DIFFTIME
+#define HAVE_TZNAME
+
+
+#endif /* MUCK_CONFIG_H_TEMP */

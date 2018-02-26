@@ -1,0 +1,1186 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>A New User's Introduction to TinyMUCK 2.3</title>
+  </head>
+  
+  <body bgcolor="#FFFFFF">
+    <bodytext>
+
+      <h1>A New User's Introduction to TinyMUCK 2.3</h1>
+
+
+      <p>
+	Last updated [2/18/94] by <b>Ken Arromdee</b>.  Converted to
+	html by David Moore.
+        <br>
+        Muck.man.html,v 2.1 1996/10/12 06:16:34 dmoore Exp
+      </p>
+
+      
+      <p>
+	TinyMUCK 2.3 is derived from the original TinyMUD, which itself
+	was inspired by the original MUD (Multi-User Dungeon).  On a
+	TinyMUD-derived mud, players can walk around, explore, program
+	(in a Forth-derived stack-based language called MUF), and chat
+	with other players.  There's generally no goal to the game,
+	unlike many other types of muds (LP Mud, DikuMUD) where players
+	kill monsters and gain experience.
+      </p>
+
+
+      <ul>
+	<li><a href="#Connecting and Character Creation">
+	    Connecting and Character Creation</a></li>
+	<li><a href="#Basic Commands">
+	    Basic Commands</a></li>
+	<li><a href="#Abbreviation">
+	    Abbreviation</a></li>
+	<li><a href="#Examining Objects">
+	    Examining Objects</a></li>
+	<li><a href="#Pennies">
+	    Pennies</a></li>
+	<li><a href="#Matching">
+	    Matching</a></li>
+	<li><a href="#Going Home">
+	    Going Home</a></li>
+	<li><a href="#Flags/Bits">
+	    Flags/Bits</a></li>
+	<li><a href="#Properties">
+	    Properties</a></li>
+	<li><a href="#Making Things">
+	    Making Things</a></li>
+	<li><a href="#Rooms and Exits">
+	    Rooms and Exits</a></li>
+	<li><a href="#Actions">
+	    Actions</a></li>
+	<li><a href="#Object Recycling">
+	    Object Recycling</a></li>
+	<li><a href="#Changing Ownership">
+	    Changing Ownership</a></li>
+	<li><a href="#Programs">
+	    Programs</a></li>
+	<li><a href="#Miscellaneous (mostly useless)">
+	    Miscellaneous (mostly useless)</a></li>
+	<li><a href="#Conclusion">
+	    Conclusion</a></li>
+      </ul>
+      
+
+      <hr>
+      <a name="Connecting and Character Creation"></a>
+      <h2>Connecting and Character Creation</h2>
+      <p>
+	To connect to a mud, use either <tt>telnet</tt> or one of the many
+	client programs available.  (A client program is a program you
+	run in place of <tt>telnet</tt> to connect to a mud.  This is
+	uninformative; I know.)  When you connect to the mud, you'll get
+	a welcome screen.  If you have a character, use the <tt>connect</tt>
+	command; if you don't, use <tt>create</tt>.  Some muds don't let new
+	users create characters; in this case, you have to send
+	electronic mail to the given address (if one is given), or
+	connect with a guest character (which typically has a name of
+	<tt>Guest</tt> and either no password or a password of <tt>guest</tt>).
+      </p>
+      <p>
+	Unlike IRC, you don't <em>need</em> a client to talk to the mud;
+	all mud commands can be typed in directly, without any sort of
+	protocol that has to be interpreted by your client.  But clients
+	can still help.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Basic Commands"></a>
+      <h2>Basic Commands</h2>
+      <p>
+	The MUCK interface resembles a text adventure game.  You can
+	walk around in various directions by typing the direction,
+	<tt>look</tt> at objects, pick up and drop things (using the <tt>get</tt>
+	and <tt>drop</tt> commands), and check your <tt>inventory</tt> (which can
+	be abbreviated down to <tt>i</tt>).  There is no inventory size
+	limitation.  Players who build or program (see below) can define
+	other commands; for instance, many MUCKs have commands like
+	<tt>mail</tt> or <tt>news</tt> available MUCK-wide.
+      </p>
+      <p>
+	To talk to other players, you have four commands: <tt>say</tt>,
+	<tt>pose</tt>, <tt>whisper</tt>, and <tt>page</tt>.  The <tt>say</tt> command
+	(abbreviated to " ) tells everyone in the room what you're
+	saying, in quotes; <tt>"hi.</tt> or <tt>say hi.</tt>  will give you the
+	message <tt>You say, "hi."</tt> and (if your name is Guest) will tell
+	others in the room <tt>Guest says, "hi."</tt>.  The <tt>pose</tt> command
+	(abbreviated to : ) will put the message directly after your
+	name with no <tt>says</tt>; <tt>:waves.</tt> or <tt>pose waves.</tt> will tell
+	everyone in the room <tt>Guest waves.</tt>.  You usually just need
+	the short forms " and : .
+      </p>
+      <p>
+	The <tt>whisper</tt> and <tt>page</tt> commands send messages to single
+	players; the syntax is <tt>whisper player=message</tt> or <tt>page
+	player=message</tt>.  <tt>whisper</tt> only works on players in the same
+	room. <tt>page</tt> works on any player on the MUCK; however, players
+	can set their H flag to prevent being paged.  (See below under
+	<em>flags</em>.)
+      </p>
+      <p>
+	Many MUCKs have global commands which override the standard
+	<tt>whisper</tt> and <tt>page</tt>; they provide extra features specific
+	to the individual MUCK.  Ask around on your MUCK to find out
+	more.
+      </p>
+      <p>
+	The <tt>WHO</tt> command shows you the connected players and their
+	connect times; it must be typed in capitals.  You can find only
+	players whose names start with a certain sequence of letters by
+	typing <tt>WHO</tt> followed by the letters.
+      </p>
+      <p>
+	<tt>QUIT</tt>, which must be typed in all capitals, quits the game.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Abbreviation"></a>
+      <h2>Abbreviation</h2>
+      <p>
+	Most built-in MUCK commands can be abbreviated; for instance,
+	you can use <tt>w</tt> for <tt>whisper</tt>.  Commands defined in the MUCK
+	may or may not be abbreviated; in a well-built MUCK, they
+	usually may.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Examining Objects"></a>
+      <h2>Examining Objects</h2>
+      <p>
+	The command to examine an object is <tt>examine object</tt>.  If you
+	don't own the object, the command just tells you the owner.  If
+	you own the object, you get all the information about it: how
+	many pennies it has, its flags, properties, and fields; its
+	exits/actions, and any other useful information.  This includes
+	yourself; you may <tt>examine me</tt>.
+      </p>
+      <p>
+	Most of the commands mentioned below change an object in a way
+	you can see with <tt>examine</tt>; if you don't know if the command
+	worked, you can always examine the object and check.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Pennies"></a>
+      <h2>Pennies</h2>
+      <p>
+	Pennies are a somewhat obsolete feature in MUCK that some MUCKs
+	don't even have.  If yours has them, you can find out how many
+	pennies you have with the <tt>score</tt> command (or <tt>inventory</tt>,
+	which also shows what you're carrying).  You may sometimes find
+	pennies randomly; MUF programs can also give you pennies.
+	Building, and killing other players, uses pennies (killing uses
+	up to 100).
+      </p>
+      <p>
+	You can give other players pennies with the command <tt>give
+	player=amount</tt>.  The typical penny limit is 10000.  You can't
+	give anything except pennies.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Matching"></a>
+      <h2>Matching</h2>
+      <p>
+	You can generally refer to objects by their name, or by some
+	unique prefix.  Sometimes you can use an object's number; that
+	number is visible if you own it or if it has the A, C, or L
+	flags (see below under <em>Flags</em>).  For instance, if
+	something showed up as <tt>magic hat(#1234L)</tt>, and you wanted to
+	pick it up, you could type <tt>get magic</tt>, <tt>get mag</tt>, <tt>get
+	hat</tt>, <tt>get magic hat</tt>, or (if you own it) <tt>get #1234</tt>.  If
+	there was also something in the room named <tt>magic wand</tt>, you
+	couldn't use <tt>get magic</tt> or <tt>get mag</tt> since the MUCK
+	wouldn't know which one you mean; you'd have to use one of the
+	unique forms.  If there were two things named <tt>magic hat</tt>,
+	you'd need to use the full name <tt>magic hat</tt> (which would pick
+	a random one), or use the object number.
+      </p>
+      <p>
+	Although object numbers aren't always useful, it's important to
+	know about them because some commands only work or only work
+	well with numbers and not names.
+      </p>
+      <p>
+	The names <tt>me</tt> and <tt>here</tt> are special, and can be used
+	anywhere normal object names can be.  <tt>me</tt> refers to yourself,
+	so <tt>look me</tt> would (for Guest) do the same as <tt>look Guest</tt>.
+	<tt>here</tt> refers to the current room.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Going Home"></a>
+      <h2>Going Home</h2>
+      <p>
+	Each player and thing has a <tt>home</tt>.  When you type <tt>home</tt>,
+	you and all of your things get sent to the appropriate home.
+	<tt>@link me=room</tt> or <tt>@link thing=room</tt> will change your or
+	the thing's home; the room must be specified with <tt>here</tt> or,
+	if you're not in it, an object number, and the room must be
+	owned by you or have the ABODE flag.
+      </p>
+      <p>
+	The starting home for players is one particular special room
+	compiled into the game; for things, that's either the room where
+	you created it (if you own the room or it has the A flag; see
+	under <em>flags</em>), or your own home.
+      </p>
+      <p>
+	You can <tt>kill</tt> a player; this costs between 10-100 pennies for
+	an equal percentage chance (100 for 100%).  It gives them 50
+	pennies and sends them and their things home.  It also prints a
+	kill message; the <tt>drop</tt> field is shown to the person doing
+	the killing, and the <tt>odrop</tt> field is shown to everyone else
+	in the room.  (See below under <em>fields</em>.)  The format is
+	<tt>kill player=cost</tt>.  Killing doesn't work in rooms with an H
+	flag, and wizards can't be killed.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Flags/Bits"></a>
+      <h2>Flags/Bits</h2>
+      <p>
+	Flags (also called bits) appear as letters after an object's
+	number, if that's visible.  For example, something displayed as
+	<tt>rope(#5612S)</tt> has the S flag.
+      </p>
+      <p>
+	There are five types of objects on a MUCK: players, rooms,
+	exits/actions, things and programs.  All except things have a
+	"flag" that shows what they are: P for players, R for rooms, E
+	for exits/actions, and F for programs.  You can't set these
+	"flags".
+      </p>
+      <p>
+	The W flag on a player means that the player is a wizard;
+	wizards maintain the database and run the mud, and can do almost
+	anything.  The M flag means the player is a <tt>MUCKER</tt> who is
+	allowed to write MUF programs, and the B flag means the player
+	is a <tt>BUILDER</tt> who is allowed to build and create objects.
+	MUCKs can be set up so that all players may build or program, in
+	which case the corresponding flags don't exist.  You can't set
+	these flags either (unless you're a wizard).
+      </p>
+      <p>
+	The other flags are A(BODE), C(HOWN_OK), D(ARK), H(AVEN),
+	J(UMP)OK), L(INK_OK), Q(UELL), and S(TICKY).  The command to set
+	these is <tt>@set object=flag</tt>; <tt>@set me=A</tt> or <tt>@set
+	me=ABODE</tt> will set the ABODE flag on yourself.  To unset a
+	flag, use a ! symbol; <tt>@set me=!A</tt> will remove the ABODE flag
+	from yourself.
+      </p>
+      <p>
+	Not every flag works on every kind of objects.  The Q flag is
+	only good for wizards, and the A flag, when used on any object
+	except a room, does nothing except make the object's number
+	visible.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Properties"></a>
+      <h2>Properties</h2>
+      <p>
+	Properties are also set with the @set command; the syntax is
+	<tt>@set object=property:value</tt>.  To unset a property, <tt>@set
+	object=property:</tt>, and to unset all properties, <tt>@set
+	object=:</tt>.
+      </p>
+      <p>
+	Unlike flags, most properties are not used by built-in commands;
+	lots of MUF programming (and some building) uses properties, but
+	the exact properties which are useful change from MUCK to MUCK.
+      </p>
+      <p>
+	One exception is the <tt>sex</tt> property.  The <tt>sex</tt> property is
+	used for substitutions in the <tt>@ofail</tt>, <tt>@osuccess</tt>, and
+	<tt>@odrop</tt> fields (see below, <em>Fields</em>).  You should
+	<tt>@set me=sex:male</tt>, <tt>@set me=sex:female</tt>, or <tt>@set
+	me=sex:neuter</tt> so that those messages work properly.
+      </p>
+      <p>
+	Other exceptions are the <tt>connect</tt> and <tt>disconnect</tt>
+	properties.  These are shown as messages when you connect or
+	disconnect from the mud.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Making Things"></a>
+      <h2>Making Things</h2>
+      <p>
+	The command to create a thing is <tt>@create name</tt>.  If you want
+	to describe it so that people can <tt>look</tt> at it, you can
+	<tt>@describe thing=message</tt>; otherwise, looking at it gives the
+	message <tt>You see nothing special.</tt> (except for rooms, which
+	are just blank).  You can also describe yourself; one of the
+	signs of a new player is that s/he hasn't yet given
+	himself/herself a description.
+      </p>
+      <p>
+	If you set the S flag on a thing, it will go home when dropped.
+      </p>
+      <p>
+	To rename a thing (or any other object), <tt>@name
+	object=newname</tt>.  If you want to rename yourself, you must
+	specify a password (separated by a space) after the new name.
+      </p>
+      <ul>
+	<li><a href="#Locks">
+	    Locks</a></li>
+	<li><a href="#Fields: succ, osucc, fail, ofail, drop, odrop">
+	    Fields: succ, osucc, fail, ofail, drop, odrop</a></li>
+      </ul>
+
+      <a name="Locks"></a>
+      <h3>Locks</h3>
+      <p>
+	To lock a thing to limit who can pick it up, use the <tt>@lock</tt>
+	command: <tt>@lock thing=expression</tt>.  The expression can use the
+	following special characters: & (and), | (or), ! (not), and
+	parentheses.  You can refer to a player with a * before the
+	name, and you can refer to a property with the <tt>name:value</tt>
+	syntax.  Refer to objects by name or number if they're in the
+	same room, otherwise by number.
+      </p>
+      <p>
+	For instance, if <tt>boat</tt> and <tt>repellent</tt> were things, and
+	#1000 were a room, the command
+      </p>
+      <pre>
+> @lock squid=me | *SuicideSquid | swim:yes | (boat & !repellent & #1000)
+      </pre>
+      <p>
+	would allow the following people to pick up the squid: you, the
+	player named SuicideSquid, anyone with a property swim:yes on
+	themselves or their inventory, and anyone who is carrying the
+	boat thing, not carrying the repellent thing, and is in room
+	1000.
+      </p>
+      <p>
+	There is no special word you can use in a lock to specify that
+	nobody can pick the thing up.  Common ways to do this are to
+	lock the thing to a room nobody can go to (such as #0 on many
+	muds), or to lock to <tt>me&!me</tt>.
+      </p>
+      <p>
+	The command to remove a lock on something is <tt>@unlock thing</tt>.
+      </p>
+
+      <a name="Fields: succ, osucc, fail, ofail, drop, odrop"></a>
+      <h3>Fields: succ, osucc, fail, ofail, drop, odrop</h3>
+      <p>
+	You can then set fields to print various messages; the commands
+	to set all the different kinds fields are the same except for
+	the name: <tt>@&lt;field&gt; thing=message</tt>.  Don't confuse these
+	with properties; for instance, to set an odrop field the command
+	is <tt>@odrop thing=message</tt>, but not <tt>@set
+	thing=odrop:message</tt>.  (MUSH and MUSE do in fact make these
+	forms equivalent, but MUCK does not.)
+      </p>
+      <p>
+	The <tt>succ</tt> and <tt>osucc</tt> fields are shown when someone picks
+	up the thing.  (If the thing is locked, this means they have to
+	pass the lock.)  <tt>succ</tt> is shown to the person picking it up.
+	<tt>osucc</tt> is shown to the rest of the people in the room, but
+	with pronoun substitutions and with the person's name added in
+	front.  Pronoun substitutions are as follows:
+      </p>
+      <pre>
+Substitutions   sex:male  sex:female sex:neuter  (unset)
+%a (absolute)       his        hers       its     &lt;name&gt;'s
+%n         (%n is always replaced with the player's name)
+%o (object)         him         her        it     &lt;name&gt;
+%p (possessive)     his         her       its     &lt;name&gt;'s
+%r (reflexive)  himself     herself    itself     &lt;name&gt;
+%s (subject)         he         she        it     &lt;name&gt;
+      </pre>
+      <p>
+	The substituted word is also capitalized if the letter after the
+	% is capitalized.
+      </p>
+      <p>
+	For instance, if a thing had the osucc message <tt>reaches for the
+	octopus.  %S at first misses, but finally grabs the slimy
+	creature in %p hands.</tt>, and a male player named Guest picks it
+	up, the room would see the message <tt>Guest reaches for the
+	octopus.  He at first misses, but finally grabs the slimy
+	creature in his hands.</tt>
+      </p>
+      <p>
+	<tt>fail</tt> and <tt>ofail</tt> are the same, except are shown when you
+	<em>don't</em> pass the lock.
+      </p>
+      <p>
+	<tt>drop</tt> and <tt>odrop</tt> are shown when someone drops the thing.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Rooms and Exits"></a>
+      <h2>Rooms and Exits</h2>
+      <p>
+	The command to create a room is <tt>@dig name</tt>.  This creates a
+	room with that name, connected nowhere and with no entrances or
+	exits, then prints the number of the new room.  The command to
+	make an exit is <tt>@open exit-name</tt>; the command to link that
+	exit to a room is <tt>@link exit-name=room</tt>.  In most cases, you
+	can only specify the room by number, so if you're making rooms
+	and exits and think the room number will scroll off your screen,
+	you might want to write it down on paper.  Neither of these
+	commands automatically makes an exit back; to do that you have
+	to go to the other room and make an exit separately.
+      </p>
+      <p>
+	The semicolon (;) is special in exit names, and separates
+	alternate names for the same exit.  If you wanted to be able to
+	go somewhere by typing either <tt>w</tt> or <tt>west</tt>, you'd <tt>@open
+	w;west</tt>.
+      </p>
+      <p>
+	The destination <tt>home</tt> is special as a destination; if you
+	<tt>@link exit=home</tt>, anyone who uses the exit is sent home (but
+	keeps everything s/he is carrying).
+      </p>
+      <p>
+	Exits and rooms may have descriptions; use the <tt>@desc</tt> command
+	to describe them just like describing things.
+      </p>
+      <p>
+	Example (in this example, commands the player types start with >
+	):
+      </p>
+      <pre>
+> look
+Living Room(#1634R)
+You are standing in a living room; a new MUDder has just moved
+in, so it's still quite messy.  The floor is strewn with
+cardboard boxes bearing indecipherable labels, and the only
+walkable path between them leads eastwards to the kitchen.
+> @dig Kitchen
+Kitchen created with room number 1635.
+> @open e;east;kitchen
+Exit opened with number 1636.
+> @link east=#1635
+Linked to Kitchen(#1635R).
+> east
+Kitchen(#1635R)
+> @describe here=This room is a kitchen east of the main living
+room.  I'm going to give it a longer description later, since
+bare descriptions look ugly.
+Description set.
+> look
+Kitchen(#1635R)
+This room is a kitchen east of the main living room.  I'm going to
+give it a longer description later, since bare descriptions look
+ugly.
+> @open w;west;back;out;living;living room
+Exit opened with number 1637.
+> @link west=#1634
+Linked to Living Room(#1634R).
+> @describe west=You see a living room that way.
+Description set.
+> look west
+You see a living room that way.
+      </pre>
+      <p>
+	There is a shorthand form for opening and linking an exit, since
+	they are commonly done together: <tt>@open name=room</tt>.  In the
+	above example, the first opening/linking pair could have been
+	replaced by <tt>@open e;east;kitchen=#1635</tt>.  If you do this,
+	however, and make a mistake (such as typing the wrong room
+	number), the opening might work while the linking fails.  In
+	this case, you don't want to use the shorthand form again; what
+	that would do is open and link <em>another</em> exit, while
+	leaving the first one present but unlinked.  Instead, you want
+	to separately type just the @link command.
+      </p>
+      <p>
+	You can only use the @open command in a room which you own.  If
+	you want an exit that comes from a room you don't own, you must
+	ask the room owner to do the <tt>@open</tt> command, but not to link
+	the exit; then you can go there and link the exit yourself.
+	(You won't be able to use the shorthand form that combines
+	opening and linking.)
+      </p>
+      <p>
+	You can only use the <tt>@link</tt> command to link an exit to a room
+	you own, <em>or</em> to a room which has the L flag set.  If you
+	want an exit which goes to a room you don't own, you must ask
+	the owner to set the room L.
+      </p>
+      <p>
+	The person who links the exit always ends up owning it.
+      </p>
+
+      <ul>
+	<li><a href="#Locks and Fields on Exits">
+	    Locks and Fields on Exits</a></li>
+	<li><a href="#Locks and Fields on Rooms">
+	    Locks and Fields on Rooms</a></li>
+	<li><a href="#Dark Rooms">
+	    Dark Rooms</a></li>
+      </ul>
+
+      <a name="Locks and Fields on Exits"></a>
+      <h3>Locks and Fields on Exits</h3>
+      <p>
+	The <tt>@lock</tt> command and all the field-setting commands work on
+	exits.  The lock controls who can go through the exit, so for
+	instance if you wanted an exit named "ladies" to allow through
+	either you, or females who carry a particular key, <tt>@lock
+	ladies=me | (sex:female & key)</tt>.
+      </p>
+      <p>
+	Setting a succ, osucc, fail, and ofail on the exit (with
+	<tt>@succ</tt>, <tt>@osucc</tt>, <tt>@fail</tt>, <tt>@ofail</tt>) works as expected.
+	If someone goes through the exit, s/he sees the succ message,
+	and everyone else in the room sees the osucc message; the osucc
+	message is pronoun substituted and the person's name added to
+	the front.  If the exit is locked so that someone can't go
+	through it, s/he sees the fail message and the room sees the
+	ofail message.
+      </p>
+      <p>
+	The fail and ofail messages are <em>also</em> shown if the exit
+	is not linked anywhere.  It's not a good idea, however, to leave
+	an exit unlinked for this purpose, since anybody can relink it
+	and <tt>steal</tt> the exit.  If you want to make a <tt>scenery</tt> exit,
+	link the exit to the same room (<tt>@link exit=here</tt>), and lock
+	it to an unreachable room or an expression like <tt>me&!me</tt>, just
+	like locking an ungettable object.  You can use this to make
+	<tt>fake</tt> things and to add <tt>commands</tt> to a room.  In the
+	example above:
+      </p>
+      <pre>
+> @open box;boxes;cardboard;cardboard box;cardboard boxes=here
+Exit opened with number 1638.
+Linked to Living Room(#1634R).
+> @lock boxes=me&!me
+Locked.
+> @desc boxes=The boxes all say "ACME Moving Company" on them.
+Description set.
+> @open open box;open boxes;tear box;tear boxes=here
+Exit opened with number 1639.
+Linked to Living Room(#1634R).
+> @lock open boxes=me&!me
+Locked.
+> @fail open boxes=The boxes are tightly sealed.
+Message set.
+> @ofail open boxes=tries to open the boxes.
+      </pre>
+      <p>
+	Now anyone in the room can look at the boxes and get the ACME
+	description, and can type the command <tt>open boxes</tt> to get the
+	appropriate messages.
+      </p>
+
+      <a name="Locks and Fields on Rooms"></a>
+      <h3>Locks and Fields on Rooms</h3>
+      <p>
+	You might expect locks on rooms to keep out unwanted players.
+	It won't work; you have to lock all the entrances into them (as
+	well as unsetting the J, L, and A flags).  You can lock, and set
+	succ and other fields on, rooms; however, this affects only the
+	room's description and messages.
+      </p>
+      <p>
+	If the room is locked, and someone passes the lock, they see the
+	succ message as an extra line of description; otherwise they see
+	the fail message.  (The lock is checked whenever they'd see the
+	description of the room: when entering and when typing the
+	<tt>look</tt> command inside).  The osucc (or ofail) messages are
+	shown to everyone else in the room at the same time, with name
+	and pronoun substitutions added.
+      </p>
+      <p>
+	The drop and odrop fields work differently on rooms; they are
+	shown when someone drops a thing in the room.  The odrop message
+	is printed with the thing's name at the front, not the player's
+	name.
+      </p>
+      <p>
+	You can set a <tt>drop-to</tt> on a room by <tt>@link</tt>ing it to some
+	other room, or to HOME.  If somebody drops something there, the
+	thing gets sent to the other room instead.  If the room has an S
+	flag, the things hang around until there are no people around,
+	and <em>then</em> go to the other room; this feature is mostly a
+	relic of TinyMUD.
+      </p>
+
+      <a name="Dark Rooms"></a>
+      <h3>Dark Rooms</h3>
+      <p>
+	If you set the D bit on a room, every object in the room becomes
+	invisible except to you or to the object's owner.  <tt>has
+	arrived</tt> and <tt>has left</tt> messages don't appear.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Actions"></a>
+      <h2>Actions</h2>
+      <p>
+	Actions are exits, but don't have to come from, or go to, rooms.
+	They are created with the command <tt>@action name=source</tt>.
+	(Exits on rooms are a special case of actions, and the command
+	<tt>@action name=here</tt> is the same as <tt>@open name</tt>.)  The
+	source for the action may be a room, a thing, or a person
+	(i.e. you).
+      </p>
+      <p>
+	You can link an action to anything using the regular <tt>@link</tt>
+	command; the object you are linking to must be owned by you or
+	have its L flag set.  The succ, fail, osucc, and ofail work
+	properly on all actions, and you can still use semicolons in the
+	action name to separate alternate names for the same action.
+	Otherwise the effects are:
+      </p>
+      <p>
+	<em>Rooms:</em> Using the action takes you to the room (or your
+	home, if the action was linked to the special `room' <tt>home</tt>),
+	just like an exit.  If the action is located on yourself, it's
+	an easy way to go home without losing any of your inventory.  If
+	the action is on a thing, you have a portable instant transport
+	to the room.
+      </p>
+      <p>
+	The drop and odrop fields work normally on actions that go to
+	rooms; they are displayed in the destination room, the drop to
+	the player and the odrop to everyone else (with name in front
+	and substitutions).
+      </p>
+      <p>
+	<em>Things:</em> Using the action brings the thing to you.  If
+	the action's source is also located <em>on</em> a thing, that
+	thing goes home.  For example, consider a thing named <tt>glass of
+	water</tt> with a <tt>drink water</tt> action, and a thing named <tt>empty
+	glass</tt> with a <tt>fill glass</tt> action, each action linked to the
+	opposite thing.  Someone with the glass of water can type
+	<tt>drink water</tt> and the glass will be replaced with the empty
+	glass; when they type <tt>fill glass</tt>, the empty glass will be
+	replaced with the full one.
+      </p>
+      <p>
+	If you don't want the source object to go home when the action
+	retrieves the destination thing, you can set the S flag on the
+	action.
+      </p>
+      <p>
+	The drop and odrop fields do nothing on actions which are linked
+	to things.
+      </p>
+      <p>
+	<em>Other Exits and Actions:</em> Using an action linked to
+	another action triggers the second action.  For instance, you
+	might have a <tt>glass</tt> with an action <tt>break glass</tt>, and want
+	the action to cause the glass to vanish.  To do that, you would
+	make a hidden room with an action connected to the glass, then
+	link the <tt>break glass</tt> action to this other action.  Typing
+	<tt>break glass</tt> would set off the room action, and the room
+	action would bring the glass away from the player and into the
+	room.
+      </p>
+      <p>
+	<em>Players:</em> Using an action that's linked to a player
+	takes you to the room where the player is.  The player must have
+	his J flag set, or you get the message <tt>That player does not
+	wish to be disturbed.</tt>.  (Of course, he still has to be L for
+	long enough for you to link the action to him in the first
+	place.)
+      </p>
+      <p>
+	The drop and odrop fields on the action are displayed in the
+	room the player is located in.
+      </p>
+      <p>
+	<em>Programs:</em> If you link an action to a program, using the
+	action runs the program.  See below under <em>programs</em>.
+	The drop and odrop fields are unused.
+      </p>
+      <p>
+	<em>Multiple Destinations:</em> You can link an action to many
+	other objects, if the extra objects are things or (other)
+	actions.  The syntax is <tt>@link
+	action=object1;object2;object3;object4</tt>.  For instance, if you
+	typically carry around things coat(#2000) and hat(#2001), you
+	can:
+      </p>
+      <pre>
+> @action getstuff=me
+Action created with number 2002 and attached.
+> @link getstuff=coat;hat   (Or @link getstuff=#2000;#2001)
+Linked to coat(#2000).
+Linked to hat(#2001).
+      </pre>
+      <p>
+	Then, every time you wanted to get your coat and hat, you could
+	type <tt>getstuff</tt>.
+      </p>
+      <ul>
+	<li><a href="#Moving Actions">
+	    Moving Actions</a></li>
+	<li><a href="#Actions and Room Parents">
+	    Actions and Room Parents</a></li>
+	<li><a href="#Action Matching">
+	    Action Matching</a></li>
+      </ul>
+      
+      <a name="Moving Actions"></a>
+      <h3>Moving Actions</h3>
+      <p>
+	You can move actions/exits with the @attach command.  <tt>@attach
+	action=newsource</tt> moves the action to the new source.  This
+	doesn't change the destination; to change that you need to
+	<tt>@unlink</tt> and <tt>@link</tt> again.
+      </p>
+      <p>
+	To move an action (or exit) from one room to another, attach it
+	to yourself, go to the next room, and attach it to the room.
+	This is cumbersome, but the <tt>@attach</tt> command doesn't allow
+	you to specify actions that aren't in the room with you.
+      </p>
+
+      <a name="Actions and Room Parents"></a>
+      <h3>Actions and Room Parents</h3>
+      <p>
+	You can set a second room to be the <tt>parent</tt> of a room with
+	the command <tt>@tel here=room2</tt> (where the room is, of course,
+	specified by number).  The second room must be owned by you or
+	have the L flag.
+      </p>
+      <p>
+	The purpose of a parent room is as follows: Any actions in the
+	parent room (also called the environment room) work in the rooms
+	inside it.  For instance, if you had a house with many rooms,
+	all with ceilings, and you wanted a message for <tt>up</tt> which
+	said so, you could make one parent room.  The parent room would
+	have an <tt>up</tt> exit, locked, that just prints a message saying
+	that there's a ceiling in the way.  Then, you could parent all
+	your house rooms to that one room.  This would let people type
+	<tt>up</tt> anywhere in your house and get the message.
+      </p>
+      <p>
+	Newly created start with one specific room as the parent,
+	usually room #0.  Extra commands that work throughout the MUCK
+	(such as mail) are often implemented as actions that start in
+	room #0 and are connected to MUF programs.
+      </p>
+
+      <a name="Action Matching"></a>
+      <h3>Action Matching</h3>
+      <p>
+	If there are several actions with the same name, actions are
+	matched with the following priority:
+      </p>
+      <pre>
+Actions on the room. (Highest priority.)
+Actions on things you are carrying.
+Actions on things in the room.
+Actions on yourself.
+Actions on parent rooms.  (Lowest priority.)
+      </pre>
+      <p>
+	Actions can also override built-in commands, except for the
+	built-in commands <tt>home</tt>, <tt>WHO</tt>, and <tt>QUIT</tt>.  This may
+	allow, for instance, custom <tt>page</tt> programs.  If the action is
+	named <tt>say</tt> or <tt>pose</tt>, it will override the normal commands
+	with that name even if they are typed with the " or :
+	abbreviations.
+      </p>
+      <p>
+	If several actions at the same level have the same name, the
+	first one is selected with a 50% chance, and if not the next is,
+	etc. until there's one left.  For instance, if there are 4
+	actions/exits, there is a 1/2 chance of getting the first one, a
+	1/4 chance of the second, and a 1/8 chance of either of the two
+	remaining exits.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Object Recycling"></a>
+      <h2>Object Recycling</h2>
+      <p>
+	You can find out what things you own with the <tt>@find</tt> and
+	<tt>@owned</tt> commands.  <tt>@find</tt> lists everything except
+	exits/actions, while <tt>@owned</tt> lists absolutely everything.
+	You can further restrict <tt>@find</tt> with a parameter; <tt>@find
+	dog</tt> would find objects whose names contain words starting with
+	<tt>dog</tt>, like <tt>dog</tt>, <tt>hot dogs</tt>, or <tt>dogooder</tt>.
+      </p>
+      <p>
+	To get rid of something of yours, you <tt>@recycle</tt> it.  The
+	object is deleted from the database and it gets put on a list of
+	<tt>garbage</tt> objects.  (If it has exits or actions on it, the
+	exits or actions get deleted too.)  The next time someone makes
+	something, one of the garbage objects will be reused.  The
+	<tt>garbage</tt> objects do use some database space, so if you create
+	and recycle a thousand objects you don't get back <em>all</em>
+	the space (unless there were a thousand garbage objects before
+	you did the creation).
+      </p>
+      <!-- 2.2 wouldn't let you recycle unless the object was there with
+      you; cumbersome if it's a room. --> 
+
+
+
+
+      <hr>
+      <a name="Changing Ownership"></a>
+      <h2>Changing Ownership</h2>
+      <p>
+	The <tt>@chown</tt> command allows you to change the ownership of
+	something to yourself; the object must have the C flag on it.
+	You also have to be carrying the object if it's an thing; this
+	means that you can make a person a gift by setting the gift C
+	and locking it to him/her.  Only s/he can @chown it, since only
+	s/he can pick it up.
+      </p>
+      <!-- 2.2 would not let you chown by object number. -->
+      <p>
+	Once you @chown something to yourself, you probably want to
+	remove its C flag (<tt>@set thing=!C</tt>), and change its home if
+	it's a thing, since its home is probably a room belonging to its
+	old owner.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Programs"></a>
+      <h2>Programs</h2>
+      <p>
+      </p>
+      <ul>
+	<li><a href="#Running Programs">
+	    Running Programs</a></li>
+	<li><a href="#Programs as Things">
+	    Programs as Things</a></li>
+	<li><a href="#The J Flag">
+	    The J Flag</a></li>
+      </ul>
+      
+      <a name="Running Programs"></a>
+      <h3>Running Programs</h3>
+      <p>
+	Writing and running MUF programs involves the <tt>@edit</tt> and
+	<tt>@prog</tt> commands.  (How to write programs is outside the scope
+	of this document.)  Most MUCKs are compiled so that you need to
+	have an M flag set to use these commands; policies about who is
+	allowed to have them differ widely.  Ask around and read the
+	news on your MUCK.
+      </p>
+      <p>
+	Using programs, however, doesn't require an M flag.  There are
+	three ways to use programs:
+      </p>
+      <p>
+	The first way is to use an action linked to the program.  If an
+	action is named <tt>b;bonk</tt> and linked to a bonk program, you can
+	type <tt>bonk</tt> or <tt>b</tt> to run the program.  MUCK saves any
+	arguments, so if you typed <tt>b me</tt> or <tt>bonk me</tt> it would run
+	the program with an argument of <tt>me</tt>.  You could put this
+	action on yourself if you wanted to be able to run it anywhere
+	you went, or you could put it on an environment and be able to
+	run it in any of the rooms in that environment.
+      </p>
+      <p>
+	The second way is to lock something to the program; the syntax
+	is the same as locking to a thing.  If you lock something to a
+	thing, MUCK checks to see if the player is carrying the thing,
+	but if you lock something to a program, MUCK runs the program
+	when someone tries to manipulate the locked item.  (Whether or
+	not the person passes the lock depends on what the program
+	does.)  For instance, you could have a lock to a program which
+	sends you a message; if you lock a thing to it, you would get
+	the message whenever someone tries to pick it up, and if you
+	locked an exit to it, you would get the message when someone
+	goes through the exit.  It's OK to have an exit with both a lock
+	and a link to a program.
+      </p>
+      <p>
+	The third way is to put the program in a field; the acceptable
+	fields for this are description, succ, fail, and drop.  The
+	syntax for giving an object a description that runs program
+	#3129 with a parameter of <tt>fr00ty</tt> would be <tt>@desc
+	thing=@3129 fr00ty</tt>.  Whenever someone looks at the object,
+	program 3129 would run with the given parameter.
+      </p>
+      <p>
+	The other fields work similarly: whenever they would be printed,
+	the program runs instead.  For instance, if program 1602 prints
+	an explosion message, you could put <tt>@1602</tt> in the <tt>drop</tt>
+	field.  Then, whenever someone dropped the object, the program
+	would print the explosion message.
+      </p>
+      <p>
+	The exception is the succ, fail, and drop on people; programs in
+	there don't work.
+      </p>
+      <p>
+	In order for you to run a program, either you must own it, it
+	must have an L flag, or it must be on something owned by the
+	program owner.  (That is, the action linked to it, object locked
+	to it, or object whose field contains it must be owned by the
+	program owner).
+      </p>
+
+      <a name="Programs as Things"></a>
+      <h3>Programs as Things</h3>
+      <p>
+	Programs themselves, as objects, generally act like things in
+	other ways.  They have descriptions, can be locked to keep
+	people from picking them up, etc....  (Locking a program does
+	not affect who may run it.)  However, programs don't have homes
+	(and don't go anywhere when you go home while carrying them),
+	they are invisible to everyone except the owner unless they have
+	an L flag, and you can't <tt>@chown</tt> them even if they have a C
+	flag.
+      </p>
+      <p>
+	The DARK and STICKY flags have different meanings on programs;
+	they become the DEBUG and SETUID flags.
+      </p>
+
+      <a name="The J Flag"></a>
+      <h3>The J Flag</h3>
+      <p>
+	The J (JUMP_OK) flag on something generally means that you can
+	teleport it using a program.  J things and programs can be
+	teleported (unless they're in their owner's room or going to
+	their owner's room, in which case the room must also be J); and
+	J rooms can be teleported to by you.  J people can be teleported
+	if the rooms are also J.
+      </p>
+      <p>
+	The only non-program use of the J flag is the need for a J flag
+	on a person for you to use an action that's linked to them.
+	This is a double use of the J flag (known in computer science as
+	<tt>overloading</tt>).
+      </p>
+
+
+
+
+      <hr>
+      <a name="Miscellaneous (mostly useless)"></a>
+      <h2>Miscellaneous (mostly useless)</h2>
+      <p>
+      </p>
+      <ul>
+	<li><a href="#Creation with Cost">
+	    Creation with Cost</a></li>
+	<li><a href="#Custom % Substitutions">
+	    Custom % Substitutions</a></li>
+	<li><a href="#DARK flags">
+	    DARK flags</a></li>
+	<li><a href="#@entrances">
+	    @entrances</a></li>
+	<li><a href="#Prefixes and Suffixes">
+	    Prefixes and Suffixes</a></li>
+	<li><a href="#The Q Flag">
+	    The Q Flag</a></li>
+	<li><a href="#Robbing">
+	    Robbing</a></li>
+	<li><a href="#Passwords">
+	    Passwords</a></li>
+	<li><a href="#Teleporting">
+	    Teleporting</a></li>
+	<li><a href="#@version">
+	    @version</a></li>
+      </ul>
+
+      <a name="Creation with Cost"></a>
+      <h3>Creation with Cost</h3>
+      <p>
+	You can create a thing with a higher <tt>value</tt> with the command
+	<tt>@create thing=cost</tt>.  The cost is a number, and is taken from
+	your pennies; the value of the thing becomes (cost-5)/5, with a
+	maximum value of 100 for a cost of 505.  This value (not the
+	cost you paid!) is returned when you recycle the thing.
+      </p>
+      <p>
+	About all you can do with the value is check it with a MUF
+	program.
+      </p>
+      <p>
+	Ages ago, when MUCK was TinyMUD, there was a T flag.  Rooms with
+	this were <tt>temples</tt>; when you dropped something there, it
+	would go home and you would get pennies equal to the value.
+	Puzzle solutions would provide prizes, that could be dropped in
+	temples for pennies.  Assuming that pennies still exist on your
+	MUCK, the effect may be reproduced with a MUF program.
+      </p>
+
+      <a name="Custom % Substitutions"></a>
+      <h3>Custom % Substitutions</h3>
+      <p>
+	You can change the pronoun substitutions by setting properties
+	named %a, %s, etc. on yourself; these will be used instead of
+	the values derived from your sex property.  This includes the %n
+	property, so you can give yourself a longer name that will be
+	used in some substitutions.
+      </p>
+
+      <a name="DARK flags"></a>
+      <h3>DARK flags</h3>
+      <p>
+	A person or thing with a DARK flag is invisible in a room's
+	contents; a DARK person doesn't trigger the lock on the room or
+	the room's succ, osucc, fail, or ofail fields, and gives no
+	<tt>has arrived.</tt> or <tt>has left.</tt>  messages.  Exits with a DARK
+	flag don't produce those messages either.
+      </p>
+      <p>
+	Only a wizard may set players, objects, or exits dark.
+      </p>
+
+      <a name="@entrances"></a>
+      <h3>@entrances</h3>
+      <p>
+	The <tt>@entrances</tt> command finds everything with a link to
+	something of yours.  It's useful, but mostly for information; if
+	you want someone to remove their link, you have to speak to them
+	or to a wizard.
+      </p>
+
+      <a name="Prefixes and Suffixes"></a>
+      <h3>Prefixes and Suffixes</h3>
+      <p>
+	The commands <tt>OUTPUTPREFIX message</tt> and <tt>OUTPUTSUFFIX
+	message</tt> provide the designated messages before and after any
+	output you see.  To cancel the message, use a null message.
+	They cannot be abbreviated, cannot be overridden by actions, and
+	must be typed in all capital letters.  The commands are mostly
+	useful to robots, not human players.
+      </p>
+
+      <a name="The Q Flag"></a>
+      <h3>The Q Flag</h3>
+      <p>
+	The Q flag can be set on anyone, but only works for wizards; it
+	cancels all special abilities of wizards with one exception: W
+	programs owned by wizards still work.
+      </p>
+
+      <a name="Robbing"></a>
+      <h3>Robbing</h3>
+      <p>
+	You can rob someone with <tt>rob person</tt>.  This tries to steal
+	one penny, and either does or doesn't, depending on whether they
+	are locked; you can only steal pennies, and only one at a time.
+	The person's succ, osucc, fail, and ofail fields are used for
+	this purpose.  Programs in the succ and fail fields
+	<em>don't</em> run, though if the person is locked to a program
+	that program will run.
+      </p>
+      <p>
+	It is therefore a good idea to immediately lock yourself so that
+	nobody can rob you, when you get a new character on a mud:
+	<tt>@lock me=me</tt>.  The <tt>rob</tt> command is a relic of TinyMUD, and
+	is not (nor was) really ever useful for stealing.
+      </p>
+
+      <a name="Passwords"></a>
+      <h3>Passwords</h3>
+      <p>
+	The command to set your password is <tt>@password new=old</tt>.  The
+	command <tt>@newpassword</tt> is not the same thing.
+      </p>
+
+      <a name="Teleporting"></a>
+      <h3>Teleporting</h3>
+      <!-- 2.2 would not allow @tel thing=me, which has been fixed. --> 
+      <p>
+	The <tt>@teleport</tt> command (syntax: <tt>@teleport
+	thing=destination</tt>) can be used to teleport things around;
+	however, the destination must either have an A flag or be owned
+	by you.  The thing must be yours or in a room you own.  You can
+	teleport things to yourself.
+      </p>
+      <p>
+	The <tt>@teleport</tt> command is also used for setting room parents.
+      </p>
+      <p>
+	A reasonably written teleport program is generally more useful
+	than the <tt>@teleport</tt> command.
+      </p>
+
+      <a name="@version"></a>
+      <h3>@version</h3>
+      <p>
+	The <tt>@version</tt> command does the obvious.
+      </p>
+
+
+
+
+      <hr>
+      <a name="Conclusion"></a>
+      <h2>Conclusion</h2>
+      <p>
+	We now return you to your regularly scheduled MUCK.  Have
+	fun....
+      </p>
+      <!-- Joke by BEN!!!!! -->
+
+
+
+      <p></p>
+      <hr>
+      <address>
+        <a href="http://oj.egbt.org/dmoore/">David Moore</a>,
+        <a href="mailto:dmoore@ucsd.edu">dmoore@ucsd.edu</a>
+      </address>
+      <!-- Created: Thu Sep 26 13:18:45 PDT 1996 -->
+      <!-- hhmts start -->
+Last modified: Mon Sep 30 08:40:00 PDT 
+<!-- hhmts end -->
+    </bodytext>
+  </body>
+  <!--
+  Local variables:
+  mode: html
+  eval: (save-excursion (goto-char (point-max)) (sgml-indent-or-tab))
+  End:
+  -->
+</html>
+

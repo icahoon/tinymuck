@@ -1,0 +1,58 @@
+# These were all tested generally using gcc on said machine.
+# A vender provided ansi compiler should work also.
+# A * indicates that I have actually tried this configuration recently.
+
+# All #undef, #define suggestions belong in your config.h file.
+# All LDFLAGS and 'touch' suggestions belong in the Makefile.
+
+Solaris2.5:
+Generic Sys5r4:
+	#undef HAVE_RANDOM
+	#define HAVE_DIFFTIME
+	#define HAVE_TZNMAE
+
+	LDFLAGS = -lsocket -lnsl -lelf -ldl
+	Use 'touch' instead of 'ranlib'.
+
+A/UX 3.0:
+	#undef HAVE_RANDOM
+	#define HAVE_DIFFTIME
+	#define HAVE_TZNAME
+
+	Use 'touch' instead of 'ranlib'.
+
+AIX 3.x:
+?	#define HAVE_DIFFTIME
+?	#define HAVE_TZNAME
+
+	See Makefile for options for ibm compiler.
+
+OSF/1:
+	#define HAVE_DIFFTIME
+
+Unicos (Cray C-90):
+	#define HAVE_DIFFTIME
+	#define HAVE_TZNAME
+
+	Use 'touch' instead of 'ranlib'.
+
+*BSDI:
+	Don't use -ansi in OPTIM line of Makefile.
+
+Linux:
+SunOS 4.x:
+Ultrix 4.x:
+	Out of the box.
+
+
+HPUX:
+	Maybe #undef HAVE_RANDOM.
+
+Older BSD:
+	Maybe #undef HAVE_TZSET.
+	Might not have unistd.h.
+
+Older Sys5:
+	Probably similar to A/UX, but might need -lsocket.
+	Might not have unistd.h.
+	Might not have getdtablesize or sysconf, use NOFILE or 64.

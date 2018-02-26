@@ -1,0 +1,21 @@
+#ifndef MUCK_CONFIG_H_DRUID
+#define MUCK_CONFIG_H_DRUID
+
+#define DRUID_MUCK
+#define GOD_FLAGS
+#define RESTRICTED_BUILDING
+#define RWHOD
+#define RWHO_PASS "druidwho"
+#define RWHO_NAME "DruidMuck"
+/* #define INLINE_DUMP */
+#define DUMP_INTERVAL (60*60)
+
+#include "config.h-dist"
+
+#define HAVE_DIFFTIME
+#undef HAVE_RANDOM
+#define HAVE_TZNAME
+
+
+
+#endif /* MUCK_CONFIG_H_DRUID */

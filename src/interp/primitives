@@ -1,0 +1,169 @@
+# name     - name of primitive
+# function - c function to call when this instruction is run
+# wiz      - wizard only command?
+# #args    - number of args needed (- means whole stack, does own checking)
+# types    - types of the arguments:
+#		a - address
+#		c - connection
+#		n - number
+#		N - number > 0
+#		o - dbref
+#		O - (#0..#dbtop-1, not garbage)
+#		Oh - same as O but also allow HOME
+#		P - Same as O except also check permissions on it.
+#		s - string
+#		S - nonempty string
+#		v - variable
+#		* - any type
+#		Lx - list of type x (xN xN-1 ... x1 N, for N >= 0)
+# name		function	wiz	#args	types/returns
+
+# Math primitives:
++		add		-	2	n n n
+-		sub		-	2	n n n
+*		mul		-	2	n n n
+/		div		-	2	n n n
+%		mod		-	2	n n n
+<		lessthan	-	2	n n n
+>		gtrthan		-	2	n n n
+<=		lesseq		-	2	n n n
+>=		gtreq		-	2	n n n
+=		equal		-	2	n n n
+random		random		-	0	n
+systime		systime		-	0	n
+time		time		-	0	n n n
+
+# Database manipulation primitives:
+getpropval	getpropv	-	2	O S n
+getpropstr	getprops	-	2	O S s
+getpropdbref	getpropd	-	2	O S o
+remove_prop	rmvprop		-	2	O S
+addprop		addprop		-	4	O S s n		# depricated
+setprop		setprop		-	3	O S *
+moveto		moveto		-	2	O Oh
+check_moveto	check_moveto	-	2	O Oh s
+pennies		pennies		-	1	O n
+dbcmp		dbcmp		-	2	o o n
+dbref		dbref		-	1	n o
+contents	contents	-	1	O o
+exits		exits		-	1	P o
+next		next		-	1	O o
+desc		desc		-	1	O s
+name		name		-	1	O S
+succ		succ		-	1	O s
+fail		fail		-	1	O s
+drop		drop		-	1	O s
+osucc		osucc		-	1	O s
+ofail		ofail		-	1	O s
+odrop		odrop		-	1	O s
+setname		setname		-	2	P s
+setdesc		setdesc		-	2	P s
+setsucc		setsucc		-	2	P s
+setfail		setfail		-	2	P s
+setdrop		setdrop		-	2	P s
+setosucc	setosucc	-	2	P s
+setofail	setofail	-	2	P s
+setodrop	setodrop	-	2	P s
+set		set		-	2	P S
+flag?		flagp		-	2	O S n
+player?		playerp		-	1	O n
+thing?		thingp		-	1	O n
+room?		roomp		-	1	O n
+program?	progp		-	1	O n
+exit?		exitp		-	1	O n
+ok?		okp		-	1	* n
+location	loc		-	1	O o
+owner		owner		-	1	O O
+getlink		getlink		-	1	O o
+match		match		-	1	S o
+rmatch		rmatch		-	2	O s o
+read		read		-	0	S
+dbtop		dbtop		-	0	o
+
+# Some servers have these with 'w' instead of '-'.
+addpennies	addpennies	-	2	O n
+copyobj		copyobj		-	1	O o
+
+# Flow control primitives.  execute & call can have side effects.
+execute		execute		-	1	a
+call		call		-	1	O
+
+# Stack manipulation:
+# pick, put, rotate do their own depth checking on the given arg.
+# put, rotate also have side effects on the rest of the stack.
+depth		depth		-	0	n
+pop		pop		-	1	*
+not		not		-	1	* n
+dup		dup		-	1	* * *
+over		over		-	2	* * * * *
+swap		swap		-	2	* * * *
+rot		rot		-	3	* * * * * *
+pick		pick		-	1	N *
+put		put		-	2	* N
+rotate		rotate		-	1	n
+@		at		-	1	v *
+!		bang		-	2	* v
+int		int		-	1	* n
+dbref		dbref		-	1	n o
+variable	variable	-	1	n v
+and		and		-	2	* * n
+or		or		-	2	* * n
+
+
+# String primitives:
+pronoun_sub	pronoun		-	2	O s s
+explode		explode		-	2	s S Ls
+subst		subst		-	3	s s S s
+instr		instr		-	2	s S n
+rinstr		rinstr		-	2	s S n
+number?		numberp		-	1	s n
+stringcmp	stringcmp	-	2	s s n
+strcmp		strcmp		-	2	s s n
+strncmp		strncmp		-	3	s s N n
+stringncmp	stringncmp	-	3	s s N n
+strcut		strcut		-	2	s n s s
+strlen		strlen		-	1	s n
+strcat		strcat		-	2	s s s
+atoi		atoi		-	1	s n
+intostr		intostr		-	1	* S
+strftime	strftime	-	2	n s s
+notify		notify		-	2	O s 
+notify_except	notify_except	-	3	O o s
+
+# These are internals, no actual function for them.  If has type information
+# since we call the std type check routine for it (for consistent mssages).
+if		if		i	1	*
+else		else		i	-
+then		then		i	-
+self		self		i	-
+prog		prog		i	-
+var		var_decl	i	-
+:		word_begin	i	-
+;		word_end	i	-
+exit		exit		i	-
+
+# Connection information.
+awake?		awakep		-	1	O n
+online		online		-	0	LO
+concount	concount	-	0	n
+connections	connections	-	0	Lc
+condbref	condbref	-	1	c O
+contime		contime		-	1	c n
+conidle		conidle		-	1	c n
+conhost		conhost		w	1	c s
+conboot		conboot		w	1	c
+
+# Nifty list operators:
+#sort-n-lists	sort_n_lists	-	2	LL* a LL*	# New, broken
+
+
+# These are internal to allow for profiling of special cases where
+# some of the arguments are compile time constants.
+__INTERNAL_XA	getpropv_i	-	2	O S n
+__INTERNAL_XB	getprops_i	-	2	O S s
+__INTERNAL_XC	getpropd_i	-	2	O S o
+__INTERNAL_XD	rmvprop_i	-	2	O S
+__INTERNAL_XE	addprop_i	-	4	O S s n
+__INTERNAL_XF	setprop_i	-	3	O S *
+__INTERNAL_XG	flagp_i		-	2	O S n
+

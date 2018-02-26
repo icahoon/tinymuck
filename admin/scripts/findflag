@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# print a list of all dbrefs having a given flag
+
+# findflag,v 2.1 1994/08/12 00:11:05 dmoore Exp
+
+if [ $# -ne 2 ]; then
+    echo "usage: $0 flag database"
+    echo "example: $0 'PLAYER.*WIZARD' in.foo.new"
+    exit 1
+fi
+
+exec < $2
+sed -n -e '/^#[0-9][0-9]*$/N' -e '/^#[0-9][0-9]*\n[^:]*'"$1"'[^:]*$/P' | \
+sed -e 's/^#//'
+
